@@ -6,6 +6,8 @@ Questo documento riassume lo stato completo del progetto, le scelte tecniche, l'
 
 ## 🧭 Panoramica del Progetto
 
+- **Repository GitHub**: [github.com/dalmamrk/etna-2026](https://github.com/dalmamrk/etna-2026)
+- **URL Pubblica Live (GitHub Pages)**: [https://dalmamrk.github.io/etna-2026/](https://dalmamrk.github.io/etna-2026/)
 - **Finalità**: Sito web statico interattivo, self-contained e offline-first per pianificare l'escursione di trekking sull'Etna del 12 Settembre 2026.
 - **Punto di Partenza Comune**: Alloggio a Catania (Via Crescenzio Galatola 19).
 - **Destinazione**: 3 itinerari alternativi sull'Etna (Nord, Sud, Est/Misto).
