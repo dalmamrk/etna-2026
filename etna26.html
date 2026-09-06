@@ -1,0 +1,2148 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Etna Trekking 12 Settembre - Itinerari e Mappa</title>
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+
+    <style>
+        :root {
+            --primary: #dc2626;
+            --accent-nord: #3b82f6;
+            --accent-sud: #f59e0b;
+            --accent-est: #10b981;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --surface: #ffffff;
+            --surface-alt: #f1f5f9;
+            --border: #e2e8f0;
+            --text: #334155;
+            --text-muted: #64748b;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow: 0 4px 12px rgba(0,0,0,0.08);
+            --shadow-lg: 0 10px 30px rgba(0,0,0,0.10);
+            --radius: 14px;
+            --radius-sm: 8px;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(180deg, #f0f2f5 0%, #e8ecf1 100%);
+            background-attachment: fixed;
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Header Hero */
+        header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            text-align: center;
+            padding: 44px 20px 32px;
+            margin-bottom: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(ellipse at 30% 50%, rgba(220, 38, 38, 0.08) 0%, transparent 50%),
+                        radial-gradient(ellipse at 70% 50%, rgba(59, 130, 246, 0.06) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        h1 {
+            color: #fff;
+            font-size: 2em;
+            font-weight: 700;
+            margin: 0 0 12px 0;
+            letter-spacing: -0.02em;
+            position: relative;
+        }
+
+        .base-info {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 0;
+            font-size: 0.92em;
+            position: relative;
+        }
+
+        .base-info span {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        /* Istruzione Selezione Fuori dal Box Blu */
+        .controls-instruction {
+            text-align: center;
+            padding: 24px 20px 8px 20px;
+            background: var(--surface);
+        }
+
+        .controls-instruction p {
+            margin: 0;
+            color: var(--dark);
+            font-size: 1.05em;
+            font-weight: 600;
+            line-height: 1.55;
+            letter-spacing: -0.01em;
+        }
+
+        /* Selettori Itinerario */
+        .controls {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 8px 20px 18px 20px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-select {
+            background: #ffffff;
+            border: 2px solid #cbd5e1;
+            color: var(--text);
+            padding: 9px 18px;
+            border-radius: 24px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 0.88em;
+            font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Bordi dedicati ben visibili a riposo */
+        .btn-select[data-target="all"] {
+            border-color: #94a3b8;
+            color: #334155;
+        }
+
+        .btn-select[data-target="opt1"] {
+            border-color: #60a5fa;
+            color: #1d4ed8;
+        }
+
+        .btn-select[data-target="opt2"] {
+            border-color: #f59e0b;
+            color: #b45309;
+        }
+
+        .btn-select[data-target="opt3"] {
+            border-color: #10b981;
+            color: #047857;
+        }
+
+        /* Hover evidente con colore tematico, elevazione e ombra */
+        .btn-select:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-select[data-target="all"]:hover {
+            border-color: #1e293b;
+            background: #f1f5f9;
+            color: #0f172a;
+            box-shadow: 0 4px 12px rgba(30, 41, 59, 0.2);
+        }
+
+        .btn-select[data-target="opt1"]:hover {
+            border-color: #1d4ed8;
+            background: #dbeafe;
+            color: #1e3a8a;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
+        }
+
+        .btn-select[data-target="opt2"]:hover {
+            border-color: #b45309;
+            background: #fef3c7;
+            color: #78350f;
+            box-shadow: 0 4px 14px rgba(245, 158, 11, 0.25);
+        }
+
+        .btn-select[data-target="opt3"]:hover {
+            border-color: #047857;
+            background: #d1fae5;
+            color: #064e3b;
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);
+        }
+
+        /* Stato Attivo Pieno */
+        .btn-select.active[data-target="all"] {
+            background: #1e293b;
+            color: #ffffff;
+            border-color: #1e293b;
+            box-shadow: 0 4px 12px rgba(30, 41, 59, 0.35);
+        }
+
+        .btn-select.active[data-target="opt1"] {
+            background: #2563eb;
+            border-color: #2563eb;
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.38);
+        }
+
+        .btn-select.active[data-target="opt2"] {
+            background: #d97706;
+            border-color: #d97706;
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(217, 119, 6, 0.38);
+        }
+
+        .btn-select.active[data-target="opt3"] {
+            background: #059669;
+            border-color: #059669;
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(5, 150, 105, 0.38);
+        }
+
+        .btn-select.active:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.06);
+        }
+
+        /* Container Mappa e Scheda Info */
+        .map-section {
+            max-width: 1200px;
+            margin: 0 auto 32px auto;
+            background: var(--surface);
+            border-radius: 0 0 var(--radius) var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            display: grid;
+            grid-template-columns: 1fr 340px;
+        }
+
+        #map {
+            width: 100%;
+            height: 520px;
+            z-index: 1;
+        }
+
+        .route-info-panel {
+            padding: 24px;
+            background: var(--surface);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .route-info-panel h3 {
+            margin-top: 0;
+            color: var(--dark);
+            font-size: 1.15em;
+            font-weight: 700;
+            border-bottom: 2px solid var(--surface-alt);
+            padding-bottom: 10px;
+        }
+
+        .info-detail {
+            margin: 12px 0;
+            font-size: 0.9em;
+        }
+
+        .info-detail strong {
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 3px;
+            font-weight: 600;
+        }
+
+        .btn-gmaps {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            text-decoration: none;
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 0.92em;
+            margin-top: 15px;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-gmaps:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
+
+        /* Card Dettaglio */
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap: 24px;
+            max-width: 1240px;
+            margin: 0 auto 32px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+            border: 1px solid var(--border);
+            border-top: 3px solid var(--border);
+        }
+
+        .card:hover {
+            transform: translateY(-3px) scale(1.005);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card.active-card {
+            border-color: var(--dark);
+            border-top-width: 3px;
+            box-shadow: 0 8px 30px rgba(30, 41, 59, 0.15);
+        }
+
+        #card-opt1 { border-top-color: var(--accent-nord); }
+        #card-opt2 { border-top-color: var(--accent-sud); }
+        #card-opt3 { border-top-color: var(--accent-est); }
+
+        .card > img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .card-body {
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .badge-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 0.72em;
+            font-weight: 700;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+
+        .card-tagline {
+            font-size: 0.82em;
+            color: var(--text-muted);
+            font-style: italic;
+            font-weight: 500;
+        }
+
+        .bg-nord { background: var(--accent-nord); }
+        .bg-sud { background: var(--accent-sud); }
+        .bg-est { background: var(--accent-est); }
+
+        .card-title {
+            margin: 0 0 12px 0;
+            font-size: 1.2em;
+            color: var(--dark);
+            line-height: 1.35;
+            min-height: 52px;
+            display: flex;
+            align-items: flex-start;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+
+        .card-intro {
+            font-size: 0.9em;
+            color: var(--text);
+            margin-bottom: 16px;
+            line-height: 1.55;
+            font-weight: 400;
+            background: var(--surface-alt);
+            padding: 12px 14px;
+            border-radius: var(--radius-sm);
+            border-left: 3px solid var(--border);
+            min-height: 64px;
+            box-sizing: border-box;
+        }
+
+        .departure-section { min-height: 52px; }
+
+        .card-section {
+            font-size: 0.88em;
+            color: var(--text);
+            margin-bottom: 14px;
+            line-height: 1.55;
+        }
+
+        .section-label {
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .section-text { margin: 0; }
+
+        .sub-step {
+            background: var(--surface-alt);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
+            font-size: 0.95em;
+        }
+
+        .card-highlight {
+            padding: 14px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 0.87em;
+            line-height: 1.5;
+            margin-bottom: 16px;
+            min-height: 84px;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+        }
+
+        .highlight-nord {
+            background: #eff6ff;
+            border-left: 4px solid var(--accent-nord);
+            color: #1e40af;
+        }
+
+        .highlight-sud {
+            background: #fffbeb;
+            border-left: 4px solid var(--accent-sud);
+            color: #92400e;
+        }
+
+        .highlight-est {
+            background: #ecfdf5;
+            border-left: 4px solid var(--accent-est);
+            color: #065f46;
+        }
+
+        .card-footer-group {
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .stats-box {
+            background: var(--surface-alt);
+            padding: 12px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 0.85em;
+            border: 1px solid var(--border);
+        }
+
+        .stats-box p { margin: 5px 0; }
+
+        /* Carousel Gallery in ogni Card */
+        .card-carousel {
+            background: #fdfdfd;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 10px 12px 10px 12px;
+        }
+
+        .carousel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .carousel-title {
+            font-size: 0.78em;
+            font-weight: 700;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .carousel-counter {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            color: #334155;
+            font-size: 0.72em;
+            padding: 2px 7px;
+            border-radius: 12px;
+            font-weight: 700;
+        }
+
+        .carousel-stage {
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            width: 100%;
+            height: 165px;
+            background: #0f172a;
+            user-select: none;
+        }
+
+        .carousel-track {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .carousel-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s ease, transform 0.35s ease;
+            transform: scale(0.97);
+            cursor: pointer;
+        }
+
+        .carousel-slide.active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: scale(1);
+        }
+
+        .carousel-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.4s ease;
+        }
+
+        .carousel-slide:hover img {
+            transform: scale(1.04);
+        }
+
+        .slide-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(15, 23, 42, 0.92) 0%, rgba(15, 23, 42, 0.6) 65%, transparent 100%);
+            color: #fff;
+            padding: 24px 12px 8px 12px;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .slide-title {
+            font-size: 0.82em;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+        }
+
+        .slide-sub {
+            font-size: 0.68em;
+            color: #cbd5e1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Pulsanti Frecce */
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 32px;
+            background: rgba(15, 23, 42, 0.75);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            line-height: 1;
+            cursor: pointer;
+            z-index: 5;
+            transition: background 0.2s ease, transform 0.2s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .carousel-btn:hover {
+            background: rgba(15, 23, 42, 0.95);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .carousel-btn.prev {
+            left: 8px;
+        }
+
+        .carousel-btn.next {
+            right: 8px;
+        }
+
+        /* Indicatori Dots */
+        .carousel-dots {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #cbd5e1;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .dot.active {
+            background: var(--dark);
+            transform: scale(1.3);
+        }
+
+        /* Modal Immagine Lightbox */
+        .image-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.88);
+            backdrop-filter: blur(6px);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+
+        .image-modal-overlay.open {
+            display: flex;
+            opacity: 1;
+        }
+
+        .image-modal-content {
+            background: #fff;
+            border-radius: 14px;
+            max-width: 820px;
+            width: 100%;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            position: relative;
+            animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes modalPop {
+            from {
+                transform: scale(0.95);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            background: rgba(0, 0, 0, 0.6);
+            color: #fff;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .modal-close-btn:hover {
+            background: rgba(0, 0, 0, 0.85);
+            transform: scale(1.1);
+        }
+
+        .modal-image-wrapper {
+            position: relative;
+            width: 100%;
+            max-height: 520px;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-image-wrapper img {
+            max-width: 100%;
+            max-height: 520px;
+            object-fit: contain;
+            display: block;
+        }
+
+        .modal-nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(15, 23, 42, 0.65);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            font-size: 26px;
+            line-height: 1;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(4px);
+            user-select: none;
+        }
+
+        .modal-nav-btn:hover {
+            background: rgba(15, 23, 42, 0.9);
+            transform: translateY(-50%) scale(1.08);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .modal-nav-btn.prev {
+            left: 14px;
+        }
+
+        .modal-nav-btn.next {
+            right: 14px;
+        }
+
+        .modal-details {
+            padding: 18px 24px;
+        }
+
+        .modal-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 6px;
+        }
+
+        .modal-counter-badge {
+            background: #e2e8f0;
+            color: #475569;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 999px;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .modal-details h3 {
+            margin: 0;
+            color: var(--dark);
+            font-size: 1.25em;
+        }
+
+        .modal-details p {
+            margin: 0;
+            color: #4b5563;
+            font-size: 0.92em;
+            line-height: 1.5;
+        }
+
+        /* Sezione Consigli per l'Etna */
+        .tips-container {
+            max-width: 1240px;
+            margin: 0 auto 0 auto;
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 28px;
+            box-shadow: var(--shadow);
+        }
+
+        .tips-container h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: var(--dark);
+            font-size: 1.25em;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid var(--surface-alt);
+            padding-bottom: 14px;
+            letter-spacing: -0.01em;
+        }
+
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 16px;
+        }
+
+        .tip-card {
+            background: var(--surface-alt);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .tip-card:nth-child(1) { border-left: 3px solid var(--accent-nord); }
+        .tip-card:nth-child(2) { border-left: 3px solid var(--accent-sud); }
+        .tip-card:nth-child(3) { border-left: 3px solid var(--primary); }
+
+        .tip-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .tip-card h4 {
+            margin: 0 0 10px 0;
+            font-size: 1em;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+        }
+
+        .tip-card p {
+            margin: 0;
+            font-size: 0.88em;
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        /* Icone SVG inline */
+        .icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.15em;
+            height: 1.15em;
+            vertical-align: -0.15em;
+            flex-shrink: 0;
+        }
+
+        .icon svg {
+            width: 100%;
+            height: 100%;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .icon-lg {
+            width: 1.35em;
+            height: 1.35em;
+            vertical-align: -0.2em;
+        }
+
+        .icon-circle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .icon-circle svg {
+            width: 18px;
+            height: 18px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .icon-circle.blue { background: #eff6ff; color: var(--accent-nord); }
+        .icon-circle.amber { background: #fffbeb; color: var(--accent-sud); }
+        .icon-circle.red { background: #fef2f2; color: var(--primary); }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 36px 20px;
+            color: var(--text-muted);
+            font-size: 0.85em;
+            max-width: 1240px;
+            margin: 0 auto;
+        }
+
+        footer .footer-line {
+            color: var(--text);
+            font-weight: 600;
+            font-size: 1.05em;
+            margin-bottom: 4px;
+        }
+
+        /* ==========================================================
+           RESPONSIVE & MOBILE DESIGN (Smartphone & Tablet)
+           ========================================================== */
+        @media (max-width: 900px) {
+            .map-section {
+                grid-template-columns: 1fr;
+                margin: 0 0 24px 0;
+                border-radius: 0;
+            }
+
+            #map {
+                height: 380px;
+            }
+
+            .route-info-panel {
+                border-left: none;
+                border-top: 1px solid var(--border);
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                font-size: 15px;
+            }
+
+            /* Header compatto e leggibile */
+            header {
+                padding: 28px 16px 20px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+                line-height: 1.25;
+                margin-bottom: 10px;
+            }
+
+            .base-info {
+                font-size: 0.82em;
+                padding: 6px 14px;
+                border-radius: 20px;
+                line-height: 1.4;
+            }
+
+            .controls-instruction {
+                padding: 16px 16px 6px;
+            }
+
+            .controls-instruction p {
+                font-size: 0.92em;
+                line-height: 1.45;
+            }
+
+            /* Filtri: barra orizzontale a scorrimento fluido con gesture touch */
+            .controls {
+                justify-content: flex-start;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                padding: 10px 16px;
+                gap: 8px;
+                scrollbar-width: none;
+            }
+
+            .controls::-webkit-scrollbar {
+                display: none;
+            }
+
+            .btn-select {
+                flex-shrink: 0;
+                padding: 8px 14px;
+                font-size: 0.82em;
+                white-space: nowrap;
+            }
+
+            /* Mappa e Pannello Info */
+            #map {
+                height: 300px;
+            }
+
+            .route-info-panel {
+                padding: 16px;
+            }
+
+            .route-info-panel h3 {
+                font-size: 1.05em;
+                padding-bottom: 8px;
+            }
+
+            .info-detail {
+                margin: 8px 0;
+                font-size: 0.88em;
+            }
+
+            .btn-gmaps {
+                padding: 10px 14px;
+                font-size: 0.9em;
+                margin-top: 12px;
+            }
+
+            /* Card Schede Itinerario a colonna singola fluida */
+            .cards-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 0 16px;
+                margin-bottom: 24px;
+            }
+
+            .card {
+                border-radius: 12px;
+            }
+
+            .card:hover {
+                transform: none; /* Disattiva hover lift su touch screen */
+            }
+
+            .card > img {
+                height: 180px;
+            }
+
+            .card-body {
+                padding: 16px;
+            }
+
+            .card-title {
+                font-size: 1.15em;
+                min-height: auto;
+                margin-bottom: 8px;
+            }
+
+            .card-intro {
+                font-size: 0.88em;
+                min-height: auto;
+                padding: 10px 12px;
+                margin-bottom: 12px;
+            }
+
+            .departure-section {
+                min-height: auto;
+                margin-bottom: 10px;
+            }
+
+            .card-section {
+                font-size: 0.86em;
+                margin-bottom: 12px;
+            }
+
+            .sub-step {
+                padding: 10px 12px;
+                font-size: 0.92em;
+            }
+
+            .card-highlight {
+                min-height: auto;
+                padding: 12px 14px;
+                font-size: 0.86em;
+                margin-bottom: 14px;
+            }
+
+            .stats-box {
+                padding: 10px 12px;
+                font-size: 0.84em;
+            }
+
+            /* Caroselli nelle Card */
+            .card-carousel {
+                padding: 8px 10px 10px;
+            }
+
+            .carousel-stage {
+                height: 190px;
+            }
+
+            .carousel-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 22px;
+            }
+
+            .slide-caption {
+                padding: 22px 10px 8px;
+            }
+
+            .slide-title {
+                font-size: 0.82em;
+            }
+
+            .slide-sub {
+                font-size: 0.7em;
+            }
+
+            .carousel-dots {
+                flex-wrap: wrap;
+                gap: 5px;
+                margin-top: 6px;
+            }
+
+            .dot {
+                width: 7px;
+                height: 7px;
+            }
+
+            /* Lightbox Modal ottimizzato per schermi smartphone */
+            .image-modal-overlay {
+                padding: 12px;
+            }
+
+            .image-modal-content {
+                border-radius: 12px;
+                max-height: 92vh;
+                display: flex;
+                flex-direction: column;
+                overflow-y: auto;
+            }
+
+            .modal-image-wrapper {
+                max-height: 48vh;
+                flex-shrink: 0;
+            }
+
+            .modal-image-wrapper img {
+                max-height: 48vh;
+            }
+
+            .modal-nav-btn {
+                width: 38px;
+                height: 38px;
+                font-size: 22px;
+            }
+
+            .modal-nav-btn.prev {
+                left: 8px;
+            }
+
+            .modal-nav-btn.next {
+                right: 8px;
+            }
+
+            .modal-close-btn {
+                top: 8px;
+                right: 8px;
+                width: 36px;
+                height: 36px;
+                font-size: 18px;
+            }
+
+            .modal-details {
+                padding: 14px 16px;
+            }
+
+            .modal-details h3 {
+                font-size: 1.1em;
+            }
+
+            .modal-details p {
+                font-size: 0.85em;
+                line-height: 1.5;
+            }
+
+            /* Sezione Consigli e Footer */
+            .tips-container {
+                padding: 20px 16px;
+                margin: 0 16px;
+                border-radius: 12px;
+            }
+
+            .tips-container h2 {
+                font-size: 1.15em;
+                margin-bottom: 14px;
+                padding-bottom: 10px;
+            }
+
+            .tips-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .tip-card {
+                padding: 14px;
+            }
+
+            .tip-card h4 {
+                font-size: 0.95em;
+            }
+
+            .tip-card p {
+                font-size: 0.86em;
+            }
+
+            footer {
+                padding: 28px 16px;
+                margin-top: 16px;
+            }
+
+            footer .footer-line {
+                font-size: 0.98em;
+            }
+        }
+
+        @media (max-width: 400px) {
+            header {
+                padding: 24px 12px 18px;
+            }
+
+            h1 {
+                font-size: 1.35em;
+            }
+
+            .base-info {
+                font-size: 0.78em;
+                padding: 5px 10px;
+            }
+
+            .cards-container {
+                padding: 0 10px;
+            }
+
+            .card-body {
+                padding: 14px 12px;
+            }
+
+            .tips-container {
+                margin: 0 10px;
+                padding: 16px 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1><span class="icon icon-lg"><svg viewBox="0 0 24 24"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></svg></span> Trekking Etna in Autonomia</h1>
+        <div class="base-info">
+            <span class="icon"><svg viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 1 1 16 0"/><circle cx="12" cy="10" r="3"/></svg></span> Base di Partenza: <span>Via Crescenzio Galatola 19, Catania</span>
+        </div>
+    </header>
+
+    <!-- Istruzione di selezione -->
+    <div class="controls-instruction">
+        <p><strong>Seleziona un'opzione per evidenziare il percorso stradale,<br>il parcheggio e la traccia escursionistica.</strong></p>
+    </div>
+
+    <!-- Bottoni di selezione rapida -->
+    <div class="controls">
+        <button class="btn-select active" data-target="all" onclick="selectRoute('all')"><span class="icon"><svg viewBox="0 0 24 24"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg></span> Mostra Tutti</button>
+        <button class="btn-select" data-target="opt1" onclick="selectRoute('opt1')">Nord: Bottoniera 2002 & Monte Nero</button>
+        <button class="btn-select" data-target="opt2" onclick="selectRoute('opt2')">Sud: Cratere 2001 & Quota 2.500m</button>
+        <button class="btn-select" data-target="opt3" onclick="selectRoute('opt3')">Misto: Serracozzo & Sartorius</button>
+    </div>
+
+    <!-- Sezione Mappa e Pannello Dati -->
+    <div class="map-section">
+        <div id="map"></div>
+        <div class="route-info-panel">
+            <div>
+                <h3 id="panel-title">Panoramica Generale</h3>
+                <div class="info-detail">
+                    <strong><span class="icon"><svg viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 1 1 16 0"/><circle cx="12" cy="10" r="3"/></svg></span> Partenza:</strong>
+                    <span id="panel-start">Via Crescenzio Galatola 19, Catania</span>
+                </div>
+                <div class="info-detail">
+                    <strong><span class="icon"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="4"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9"/></svg></span> Destinazione & Parcheggio:</strong>
+                    <span id="panel-dest">Seleziona un'opzione per i dettagli</span>
+                </div>
+                <div class="info-detail">
+                    <strong><span class="icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span> Tempo di guida stimato:</strong>
+                    <span id="panel-time">--</span>
+                </div>
+                <div class="info-detail">
+                    <strong><span class="icon"><svg viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-1.1-.9-2-2-2h-1l-1.7-4.3A2 2 0 0 0 15.4 5H8.6a2 2 0 0 0-1.9 1.3L5 11H4c-1.1 0-2 .9-2 2v3c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg></span> Distanza stradale:</strong>
+                    <span id="panel-dist">--</span>
+                </div>
+                <div class="info-detail">
+                    <strong><span class="icon"><svg viewBox="0 0 24 24"><path d="M4 16v-2.38C4 11.5 3 10.5 3 8c0-2.7 1.5-6 4.5-6 1.9 0 2.5 1.8 2.5 3.5 0 3.1-2 5.7-2 8.7V16a2 2 0 1 1-4 0Z"/><path d="M20 20v-2.38c0-2.12 1-3.12 1-5.62 0-2.7-1.5-6-4.5-6-1.9 0-2.5 1.8-2.5 3.5 0 3.1 2 5.7 2 8.7V20a2 2 0 1 0 4 0Z"/></svg></span> Dati Trekking:</strong>
+                    <span id="panel-trek">--</span>
+                </div>
+            </div>
+            <div>
+                <a id="panel-gmaps-link" href="https://maps.app.goo.gl/Qe7YGNqUH9PDTjKD8" target="_blank"
+                    class="btn-gmaps">
+                    <span class="icon"><svg viewBox="0 0 24 24"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></span> Apri su Google Maps
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Schede Riassuntive -->
+    <div class="cards-container">
+
+        <!-- Card 1 -->
+        <div class="card" id="card-opt1" onclick="selectRoute('opt1')">
+            <img src="images/trekking%20ai%20crateri%202002%20e%20monte%20nero/crateri-2002-vulcano-etna-2048x1536.jpg" alt="Crateri del 2002 e Monte Nero">
+            <div class="card-body">
+                <div class="badge-row">
+                    <span class="badge bg-nord">Opzione 1 • Versante Nord</span>
+                    <span class="card-tagline">Il preferito per chi ama camminare</span>
+                </div>
+                <h3 class="card-title">Piano Provenzana – Bottoniera dei Crateri del 2002 – Monte Nero</h3>
+                
+                <p class="card-intro">L'Etna Nord è più selvaggia, meno turistica dell'Etna Sud e offre un contrasto pazzesco tra le colate laviche nere e le pinete secolari.</p>
+
+                <div class="card-section departure-section">
+                    <div class="section-label"><span class="icon"><svg viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 1 1 16 0"/><circle cx="12" cy="10" r="3"/></svg></span> Punto di partenza:</div>
+                    <p class="section-text">Parcheggio di Piano Provenzana (1.810 m).</p>
+                </div>
+
+                <div class="card-section route-section">
+                    <div class="section-label"><span class="icon"><svg viewBox="0 0 24 24"><path d="M4 16v-2.38C4 11.5 3 10.5 3 8c0-2.7 1.5-6 4.5-6 1.9 0 2.5 1.8 2.5 3.5 0 3.1-2 5.7-2 8.7V16a2 2 0 1 1-4 0Z"/><path d="M20 20v-2.38c0-2.12 1-3.12 1-5.62 0-2.7-1.5-6-4.5-6-1.9 0-2.5 1.8-2.5 3.5 0 3.1 2 5.7 2 8.7V20a2 2 0 1 0 4 0Z"/></svg></span> Il percorso:</div>
+                    <p class="section-text">Si parte salendo a piedi lungo la pista in terra battuta (che in inverno è pista da sci). Dopo una discreta salita, devierete verso la <strong>Bottoniera del 2002</strong>, una spettacolare faglia di crateri "a bottoniera" (allineati) formatisi durante una delle eruzioni più distruttive dei tempi recenti. Si cammina letteralmente sull'orlo di questi crateri. Da qui, proseguite verso <strong>Monte Nero (2.049 m)</strong>, un cratere antico molto suggestivo, per poi chiudere un percorso ad anello rientrando attraverso la bellissima <strong>Pineta Ragabo</strong>.</p>
+                </div>
+
+                <div class="card-highlight highlight-nord">
+                    <div><strong><span class="icon"><svg viewBox="0 0 24 24"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg></span> Perché sceglierlo:</strong> Dislivello interessante (circa 400-500m in base a quanto allargate il giro), niente impianti nei paraggi, crateri evidentissimi e spettacolari, e zero folla rispetto a Sud.</div>
+                </div>
+
+                <div class="card-footer-group">
+                    <div class="stats-box">
+                        <p><strong><span class="icon"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="4"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9"/></svg></span> Parcheggio:</strong> Piano Provenzana (1.810 m)</p>
+                        <p><strong><span class="icon"><svg viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-1.1-.9-2-2-2h-1l-1.7-4.3A2 2 0 0 0 15.4 5H8.6a2 2 0 0 0-1.9 1.3L5 11H4c-1.1 0-2 .9-2 2v3c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg></span> Auto da Via Galatola:</strong> ~ 1h 20 min (55 km)</p>
+                        <p><strong><span class="icon"><svg viewBox="0 0 24 24"><path d="M4 16v-2.38C4 11.5 3 10.5 3 8c0-2.7 1.5-6 4.5-6 1.9 0 2.5 1.8 2.5 3.5 0 3.1-2 5.7-2 8.7V16a2 2 0 1 1-4 0Z"/><path d="M20 20v-2.38c0-2.12 1-3.12 1-5.62 0-2.7-1.5-6-4.5-6-1.9 0-2.5 1.8-2.5 3.5 0 3.1 2 5.7 2 8.7V20a2 2 0 1 0 4 0Z"/></svg></span> Trekking:</strong> Anello ~ 5-7 km | Dislivello +400-500 m</p>
+                    </div>
+
+                    <div class="card-carousel" id="carousel-opt1">
+                        <div class="carousel-header">
+                            <span class="carousel-title"><span class="icon"><svg viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span> Gallery Percorso</span>
+                            <span class="carousel-counter" id="counter-opt1">1 / 7</span>
+                        </div>
+                        <div class="carousel-stage">
+                            <button class="carousel-btn prev" onclick="moveCarousel('opt1', -1, event)" title="Precedente">&#8249;</button>
+                            <button class="carousel-btn next" onclick="moveCarousel('opt1', 1, event)" title="Successiva">&#8250;</button>
+                            <div class="carousel-track" id="track-opt1">
+                                <div class="carousel-slide active" data-title="Crateri del 2002 & Monte Nero" data-desc="Spettacolare veduta aerea della bottoniera del 2002 con l'imponente cono vulcanico di Monte Nero." onclick="openModal('images/trekking%20ai%20crateri%202002%20e%20monte%20nero/crateri-2002-vulcano-etna-2048x1536.jpg', 'Crateri del 2002 & Monte Nero', 'Spettacolare veduta aerea della bottoniera del 2002 con l\'imponente cono vulcanico di Monte Nero.', event, 'opt1', 0)">
+                                    <img src="images/trekking%20ai%20crateri%202002%20e%20monte%20nero/crateri-2002-vulcano-etna-2048x1536.jpg" alt="Crateri del 2002 e Monte Nero" loading="lazy">
+                                    <div class="slide-caption">
+                                        <span class="slide-title">Crateri del 2002 & Monte Nero</span>
+                                        <span class="slide-sub">Panoramica aerea della bottoniera • Clicca per ingrandire</span>
+                                    </div>
+                                </div>
+                                <div class="carousel-slide" data-title="Contrasto Lave & Vegetazione" data-desc="Il suggestivo contrasto tra la lava scoriacea nera, le scorie rosse e la vegetazione pioniera d'alta quota." onclick="openModal('images/trekking%20ai%20crateri%202002%20e%20monte%20nero/contrasto-lava-vegetazione-eruzione-2002-1200x538.jpg', 'Contrasto Lave & Vegetazione', 'Il suggestivo contrasto tra la lava scoriacea nera, le scorie rosse e la vegetazione pioniera d\'alta quota.', event, 'opt1', 1)">
+                                    <img src="images/trekking%20ai%20crateri%202002%20e%20monte%20nero/contrasto-lava-vegetazione-eruzione-2002-1200x538.jpg" alt="Contrasto Lava e Vegetazione" loading="lazy">
+                                    <div class="slide-caption">
+                                        <span class="slide-title">Contrasto Lave & Vegetazione</span>
+                                        <span class="slide-sub">Lave nere del 2002 e macchia d'alta quota</span>
+                                    </div>
+                                </div>
+                                <div class="carousel-slide" data-title="Sentiero sui Crinali dei Crateri 2002" data-desc="Il tracciato spettacolare lungo il bordo dei crateri con visuale aperta sui rilievi montuosi circostanti." onclick="openModal('images/trekking%20ai%20crateri%202002%20e%20monte%20nero/trekking-etna-nord-crateri-2002-900x1200.jpg', 'Sentiero sui Crinali dei Crateri 2002', 'Il tracciato spettacolare lungo il bordo dei crateri con visuale aperta sui rilievi montuosi circostanti.', event, 'opt1', 2)">
+                                    <img src="images/trekking%20ai%20crateri%202002%20e%20monte%20nero/trekking-etna-nord-crateri-2002-900x1200.jpg" alt="Sentiero sui Crinali dei Crateri 2002" loading="lazy">
+                                    <div class="slide-caption">
+                                        <span class="slide-title">Sentiero sui Crinali dei Crateri 2002</span>
+                                        <span class="slide-sub">Camminata a fil di cresta sull'orlo della frattura</span>
+                                    </div>
+                                </div>
+                                <div class="carousel-slide" data-title="Trekking in Quota sulla Bottoniera" data-desc="Escursionisti in cammino sui coni piroclastici con lo sfondo dei Monti Peloritani e la valle dell'Alcantara." onclick="openModal('images/trekking%20ai%20crateri%202002%20e%20monte%20nero/camminata-crateri-del-2002-900x1200.jpg', 'Trekking in Quota sulla Bottoniera', 'Escursionisti in cammino sui coni piroclastici con lo sfondo dei Monti Peloritani e la valle dell\'Alcantara.', event, 'opt1', 3)">
+                                    <img src="images/trekking%20ai%20crateri%202002%20e%20monte%20nero/camminata-crateri-del-2002-900x1200.jpg" alt="Camminata Crateri del 2002" loading="lazy">
+                                    <div class="slide-caption">
+                                        <span class="slide-title">Trekking in Quota sulla Bottoniera</span>
+                                        <span class="slide-sub">L'ascesa verso quota 2.000 metri</span>
+                                    </div>
+                                </div>
+                                <div class="carousel-slide" data-title="Affaccio Panoramico dal Cratere" data-desc="Punto di osservazione privilegiato sul profondo abisso del cono vulcanico e sul mar Ionio in lontananza." onclick="openModal('images/trekking%20ai%20crateri%202002%20e%20monte%20nero/anniek-etna-kraters-2002-e1526108275673-1024x576.jpg', 'Affaccio Panoramico dal Cratere', 'Punto di osservazione privilegiato sul profondo abisso del cono vulcanico e sul mar Ionio in lontananza.', event, 'opt1', 4)">
+                                    <img src="images/trekking%20ai%20crateri%202002%20e%20monte%20nero/anniek-etna-kraters-2002-e1526108275673-1024x576.jpg" alt="Affaccio Panoramico dal Cratere" loading="lazy">
+                                    <div class="slide-caption">
+                                        <span class="slide-title">Affaccio Panoramico dal Cratere</span>
+                                        <span class="slide-sub">Sosta sulla cresta con visuale verso il mare</span>
+                                    </div>
+                                </div>
+                                <div class="carousel-slide" data-title="Verso la Vetta di Monte Nero" data-desc="I sentieri di sabbia vulcanica che risalgono le pendici del maestoso cratere preistorico di Monte Nero." onclick="openModal('images/trekking%20ai%20crateri%202002%20e%20monte%20nero/monte_nero_1.jpg', 'Verso la Vetta di Monte Nero', 'I sentieri di sabbia vulcanica che risalgono le pendici del maestoso cratere preistorico di Monte Nero.', event, 'opt1', 5)">
+                                    <img src="images/trekking%20ai%20crateri%202002%20e%20monte%20nero/monte_nero_1.jpg" alt="Verso Monte Nero" loading="lazy">
+                                    <div class="slide-caption">
+                                        <span class="slide-title">Verso la Vetta di Monte Nero</span>
+                                        <span class="slide-sub">Salita sul cratere antico a quota 2.049 m</span>
+                                    </div>
+                                </div>
+                                <div class="carousel-slide" data-title="Rifugio nella Pineta & Crateri Sommitali" data-desc="Tradizionale rifugio in pietra lavica tra i pini larici con la cima fumante dell'Etna sullo sfondo." onclick="openModal('images/trekking%20ai%20crateri%202002%20e%20monte%20nero/monte_nero_2.jpg', 'Rifugio nella Pineta & Crateri Sommitali', 'Tradizionale rifugio in pietra lavica tra i pini larici con la cima fumante dell\'Etna sullo sfondo.', event, 'opt1', 6)">
+                                    <img src="images/trekking%20ai%20crateri%202002%20e%20monte%20nero/monte_nero_2.jpg" alt="Rifugio in pietra e crateri sommitali" loading="lazy">
+                                    <div class="slide-caption">
+                                        <span class="slide-title">Rifugio nella Pineta & Crateri Sommitali</span>
+                                        <span class="slide-sub">Rifugio in pietra lavica e discesa tra i boschi</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-dots" id="dots-opt1">
+                            <span class="dot active" onclick="setCarouselSlide('opt1', 0, event)" title="Foto 1"></span>
+                            <span class="dot" onclick="setCarouselSlide('opt1', 1, event)" title="Foto 2"></span>
+                            <span class="dot" onclick="setCarouselSlide('opt1', 2, event)" title="Foto 3"></span>
+                            <span class="dot" onclick="setCarouselSlide('opt1', 3, event)" title="Foto 4"></span>
+                            <span class="dot" onclick="setCarouselSlide('opt1', 4, event)" title="Foto 5"></span>
+                            <span class="dot" onclick="setCarouselSlide('opt1', 5, event)" title="Foto 6"></span>
+                            <span class="dot" onclick="setCarouselSlide('opt1', 6, event)" title="Foto 7"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="card" id="card-opt2" onclick="selectRoute('opt2')">
+            <img src="images/Rifugio%20Sapienza%20%E2%80%93%20Cratere%20del%202001%20%E2%80%93%20Quota%202.500m%20(Terminale%20Funivia)/etna_rifugio_sapienza.jpg" alt="Rifugio Sapienza ed Etna Sud">
+            <div class="card-body">
+                <div class="badge-row">
+                    <span class="badge bg-sud">Opzione 2 • Versante Sud</span>
+                    <span class="card-tagline">La salita classica e panoramica</span>
+                </div>
+                <h3 class="card-title">Rifugio Sapienza – Cratere del 2001 – Quota 2.500m (Terminale Funivia)</h3>
+                
+                <p class="card-intro">Se volete spingervi più in alto possibile rimanendo nel legale e nell'autonomo, il versante Sud offre la salita più diretta. Molti prendono la funivia, ma voi potete farvela tutta a piedi.</p>
+
+                <div class="card-section departure-section">
+                    <div class="section-label"><span class="icon"><svg viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 1 1 16 0"/><circle cx="12" cy="10" r="3"/></svg></span> Punto di partenza:</div>
+                    <p class="section-text">Piazzale del Rifugio Sapienza (1.900 m).</p>
+                </div>
+
+                <div class="card-section route-section">
+                    <div class="section-label"><span class="icon"><svg viewBox="0 0 24 24"><path d="M4 16v-2.38C4 11.5 3 10.5 3 8c0-2.7 1.5-6 4.5-6 1.9 0 2.5 1.8 2.5 3.5 0 3.1-2 5.7-2 8.7V16a2 2 0 1 1-4 0Z"/><path d="M20 20v-2.38c0-2.12 1-3.12 1-5.62 0-2.7-1.5-6-4.5-6-1.9 0-2.5 1.8-2.5 3.5 0 3.1 2 5.7 2 8.7V20a2 2 0 1 0 4 0Z"/></svg></span> Il percorso:</div>
+                    <p class="section-text">Prima di partire per la salita lunga, fate un giro rapido sui <strong>Crateri Silvestri</strong> (Superiore e Inferiore), che sono a 2 minuti dal parcheggio (molto turistici ma belli). Dopodiché, ignorate la funivia e imboccate il sentiero/pista sterrata che sale tagliando i tornanti dei fuoristrada. A circa 2.100 m vi troverete davanti l'enorme e perfetto cono del <strong>Cratere del 2001</strong>. Potete salirci e camminare sul bordo (vista mozzafiato). Continuando a salire sulla pista, arriverete a <strong>quota 2.500 m</strong> (zona arrivo funivia e cratere Montagnola). Da qui, a seconda delle ordinanze sindacali in vigore quel giorno, potreste proseguire fino a 2.700m (Torre del Filosofo).</p>
+                </div>
+
+                <div class="card-highlight highlight-sud">
+                    <div><strong><span class="icon"><svg viewBox="0 0 24 24"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg></span> Perché sceglierlo:</strong> Vi dà la soddisfazione di "conquistare" la quota con le vostre gambe, partendo da 1.900m e arrivando a 2.500m/2.700m (600-800m di dislivello positivo). L'impatto vulcanico è totale, è un deserto di cenere e lapilli.</div>
+                </div>
+
+                <div class="card-footer-group">
+                    <div class="stats-box">
+                        <p><strong><span class="icon"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="4"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9"/></svg></span> Parcheggio:</strong> Piazzale Sapienza (1.900 m)</p>
+                        <p><strong><span class="icon"><svg viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-1.1-.9-2-2-2h-1l-1.7-4.3A2 2 0 0 0 15.4 5H8.6a2 2 0 0 0-1.9 1.3L5 11H4c-1.1 0-2 .9-2 2v3c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg></span> Auto da Via Galatola:</strong> ~ 55 min (35 km)</p>
+                        <p><strong><span class="icon"><svg viewBox="0 0 24 24"><path d="M4 16v-2.38C4 11.5 3 10.5 3 8c0-2.7 1.5-6 4.5-6 1.9 0 2.5 1.8 2.5 3.5 0 3.1-2 5.7-2 8.7V16a2 2 0 1 1-4 0Z"/><path d="M20 20v-2.38c0-2.12 1-3.12 1-5.62 0-2.7-1.5-6-4.5-6-1.9 0-2.5 1.8-2.5 3.5 0 3.1 2 5.7 2 8.7V20a2 2 0 1 0 4 0Z"/></svg></span> Trekking:</strong> ~ 7-9 km a/r | Dislivello +600-800 m</p>
+                    </div>
+
+                    <div class="card-carousel" id="carousel-opt2">
+                        <div class="carousel-header">
+                            <span class="carousel-title"><span class="icon"><svg viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span> Gallery Percorso</span>
+                            <span class="carousel-counter" id="counter-opt2">1 / 7</span>
+                        </div>
+                        <div class="carousel-stage">
+                            <button class="carousel-btn prev" onclick="moveCarousel('opt2', -1, event)" title="Precedente">&#8249;</button>
+                            <button class="carousel-btn next" onclick="moveCarousel('opt2', 1, event)" title="Successiva">&#8250;</button>
+                            <div class="carousel-track" id="track-opt2">
+                                <div class="carousel-slide active" data-title="Rifugio Sapienza (1.900 m)" data-desc="Il celebre rifugio storico del CAI a quota 1.900 m, punto di partenza per tutte le escursioni del versante Sud." onclick="openModal('images/Rifugio%20Sapienza%20%E2%80%93%20Cratere%20del%202001%20%E2%80%93%20Quota%202.500m%20(Terminale%20Funivia)/rifugio_sapeinza.webp', 'Rifugio Sapienza (1.900 m)', 'Il celebre rifugio storico del CAI a quota 1.900 m, punto di partenza per tutte le escursioni del versante Sud.', event, 'opt2', 0)">
+                                    <img src="images/Rifugio%20Sapienza%20%E2%80%93%20Cratere%20del%202001%20%E2%80%93%20Quota%202.500m%20(Terminale%20Funivia)/rifugio_sapeinza.webp" alt="Rifugio Sapienza" loading="lazy">
+                                    <div class="slide-caption">
+                                        <span class="slide-title">Rifugio Sapienza (1.900 m)</span>
+                                        <span class="slide-sub">Piazzale di partenza • Clicca per ingrandire</span>
+                                    </div>
+                                </div>
+                                <div class="carousel-slide" data-title="Crateri Silvestri dall'Alto" data-desc="Panoramica aerea sui Crateri Silvestri e sulla strada panoramica che sale da Nicolosi verso la costa ionica." onclick="openModal('images/Rifugio%20Sapienza%20%E2%80%93%20Cratere%20del%202001%20%E2%80%93%20Quota%202.500m%20(Terminale%20Funivia)/etna_rifugio_sapienza.jpg', 'Crateri Silvestri dall\'Alto', 'Panoramica aerea sui Crateri Silvestri e sulla strada panoramica che sale da Nicolosi verso la costa ionica.', event, 'opt2', 1)">
+                                    <img src="images/Rifugio%20Sapienza%20%E2%80%93%20Cratere%20del%202001%20%E2%80%93%20Quota%202.500m%20(Terminale%20Funivia)/etna_rifugio_sapienza.jpg" alt="Crateri Silvestri e Piazzale Sapienza" loading="lazy">
+                                    <div class="slide-caption">
+                                        <span class="slide-title">Crateri Silvestri dall'Alto</span>
+                                        <span class="slide-sub">I coni avventizi e il piazzale Sapienza</span>
+                                    </div>
+                                </div>
+                                <div class="carousel-slide" data-title="Funivia dell'Etna verso Quota 2.500m" data-desc="La cabinovia che risale i pendii di cenere nera collegando il piazzale Sapienza al terminale di Quota 2.500 m." onclick="openModal('images/Rifugio%20Sapienza%20%E2%80%93%20Cratere%20del%202001%20%E2%80%93%20Quota%202.500m%20(Terminale%20Funivia)/images-1.jpg', 'Funivia dell\'Etna verso Quota 2.500m', 'La cabinovia che risale i pendii di cenere nera collegando il piazzale Sapienza al terminale di Quota 2.500 m.', event, 'opt2', 2)">
+                                    <img src="images/Rifugio%20Sapienza%20%E2%80%93%20Cratere%20del%202001%20%E2%80%93%20Quota%202.500m%20(Terminale%20Funivia)/images-1.jpg" alt="Funivia dell'Etna" loading="lazy">
+                                    <div class="slide-caption">
+                                        <span class="slide-title">Funivia dell'Etna verso Quota 2.500m</span>
+                                        <span class="slide-sub">L'impianto a fune sul deserto lavico</span>
+                                    </div>
+                                </div>
+                                <div class="carousel-slide" data-title="Cratere del 2001 (2.100 m)" data-desc="La risalita sui pendii del cratere nato nell'eruzione del 2001, con vista sui crateri inferiori e sulla piana di Catania." onclick="openModal('images/Rifugio%20Sapienza%20%E2%80%93%20Cratere%20del%202001%20%E2%80%93%20Quota%202.500m%20(Terminale%20Funivia)/cratere_2001_4.jpg', 'Cratere del 2001 (2.100 m)', 'La risalita sui pendii del cratere nato nell\'eruzione del 2001, con vista sui crateri inferiori e sulla piana di Catania.', event, 'opt2', 3)">
+                                    <img src="images/Rifugio%20Sapienza%20%E2%80%93%20Cratere%20del%202001%20%E2%80%93%20Quota%202.500m%20(Terminale%20Funivia)/cratere_2001_4.jpg" alt="Cratere del 2001" loading="lazy">
+                                    <div class="slide-caption">
+                                        <span class="slide-title">Cratere del 2001 (2.100 m)</span>
+                                        <span class="slide-sub">Il cono eruttivo e la visuale sul golfo</span>
+                                    </div>
+                                </div>
+                                <div class="carousel-slide" data-title="Cratere del Laghetto & Montagnola" data-desc="Escursionisti in cammino verso l'imponente orlo del Cratere del Laghetto dominato dal cono della Montagnola." onclick="openModal('images/Rifugio%20Sapienza%20%E2%80%93%20Cratere%20del%202001%20%E2%80%93%20Quota%202.500m%20(Terminale%20Funivia)/446561c26f10c7940c54171cdc971794.jpg', 'Cratere del Laghetto & Montagnola', 'Escursionisti in cammino verso l\'imponente orlo del Cratere del Laghetto dominato dal cono della Montagnola.', event, 'opt2', 4)">
+                                    <img src="images/Rifugio%20Sapienza%20%E2%80%93%20Cratere%20del%202001%20%E2%80%93%20Quota%202.500m%20(Terminale%20Funivia)/446561c26f10c7940c54171cdc971794.jpg" alt="Cratere del Laghetto e Montagnola" loading="lazy">
+                                    <div class="slide-caption">
+                                        <span class="slide-title">Cratere del Laghetto & Montagnola</span>
+                                        <span class="slide-sub">Trekking tra scorie e sabbie nere</span>
+                                    </div>
+                                </div>
+                                <div class="carousel-slide" data-title="Pendici della Montagnola (2.500 m)" data-desc="La salita sui versanti scoriacei d'alta quota dove le colate recenti incontrano la vegetazione pioniera." onclick="openModal('images/Rifugio%20Sapienza%20%E2%80%93%20Cratere%20del%202001%20%E2%80%93%20Quota%202.500m%20(Terminale%20Funivia)/images.jpg', 'Pendici della Montagnola (2.500 m)', 'La salita sui versanti scoriacei d\'alta quota dove le colate recenti incontrano la vegetazione pioniera.', event, 'opt2', 5)">
+                                    <img src="images/Rifugio%20Sapienza%20%E2%80%93%20Cratere%20del%202001%20%E2%80%93%20Quota%202.500m%20(Terminale%20Funivia)/images.jpg" alt="Pendici della Montagnola" loading="lazy">
+                                    <div class="slide-caption">
+                                        <span class="slide-title">Pendici della Montagnola (2.500 m)</span>
+                                        <span class="slide-sub">Deserto vulcanico e vegetazione pioniera</span>
+                                    </div>
+                                </div>
+                                <div class="carousel-slide" data-title="Quota 2.500m & Crateri Sommitali" data-desc="L'arrivo a Quota 2.500 m con la vista spettacolare sulla cima attiva dell'Etna e i mezzi speciali 4x4." onclick="openModal('images/Rifugio%20Sapienza%20%E2%80%93%20Cratere%20del%202001%20%E2%80%93%20Quota%202.500m%20(Terminale%20Funivia)/etna-crateri-sommitali-dal-rifugio-sapienza_1bbc.jpg', 'Quota 2.500m & Crateri Sommitali', 'L\'arrivo a Quota 2.500 m con la vista spettacolare sulla cima attiva dell\'Etna e i mezzi speciali 4x4.', event, 'opt2', 6)">
+                                    <img src="images/Rifugio%20Sapienza%20%E2%80%93%20Cratere%20del%202001%20%E2%80%93%20Quota%202.500m%20(Terminale%20Funivia)/etna-crateri-sommitali-dal-rifugio-sapienza_1bbc.jpg" alt="Quota 2500 e Crateri Sommitali" loading="lazy">
+                                    <div class="slide-caption">
+                                        <span class="slide-title">Quota 2.500m & Crateri Sommitali</span>
+                                        <span class="slide-sub">Il pianoro terminale e la vetta fumante</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-dots" id="dots-opt2">
+                            <span class="dot active" onclick="setCarouselSlide('opt2', 0, event)" title="Foto 1"></span>
+                            <span class="dot" onclick="setCarouselSlide('opt2', 1, event)" title="Foto 2"></span>
+                            <span class="dot" onclick="setCarouselSlide('opt2', 2, event)" title="Foto 3"></span>
+                            <span class="dot" onclick="setCarouselSlide('opt2', 3, event)" title="Foto 4"></span>
+                            <span class="dot" onclick="setCarouselSlide('opt2', 4, event)" title="Foto 5"></span>
+                            <span class="dot" onclick="setCarouselSlide('opt2', 5, event)" title="Foto 6"></span>
+                            <span class="dot" onclick="setCarouselSlide('opt2', 6, event)" title="Foto 7"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="card" id="card-opt3" onclick="selectRoute('opt3')">
+            <img src="images/Sentiero%20Serracozzo%20(Valle%20del%20Bove)/valle-del-bove-etna-2400x1350.jpg" alt="Valle del Bove e Sentiero Serracozzo">
+            <div class="card-body">
+                <div class="badge-row">
+                    <span class="badge bg-est">Opzione 3 • Escursione Mista</span>
+                    <span class="card-tagline">Versante Est + Nord</span>
+                </div>
+                <h3 class="card-title">Sentiero Serracozzo (Valle del Bove) + Monti Sartorius</h3>
+                
+                <p class="card-intro">Questa è una soluzione stupenda se volete usare la macchina a noleggio per fare due percorsi diversi nella stessa giornata, combinando crateri, grotte e panorami abissali.</p>
+
+                <div class="card-section departure-section">
+                    <div class="section-label"><span class="icon"><svg viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 1 1 16 0"/><circle cx="12" cy="10" r="3"/></svg></span> Punti di partenza:</div>
+                    <p class="section-text">Rifugio Citelli (1.740 m) & Slargo Monti Sartorius (1.660 m).</p>
+                </div>
+
+                <div class="card-section route-section">
+                    <div class="section-label"><span class="icon"><svg viewBox="0 0 24 24"><path d="M4 16v-2.38C4 11.5 3 10.5 3 8c0-2.7 1.5-6 4.5-6 1.9 0 2.5 1.8 2.5 3.5 0 3.1-2 5.7-2 8.7V16a2 2 0 1 1-4 0Z"/><path d="M20 20v-2.38c0-2.12 1-3.12 1-5.62 0-2.7-1.5-6-4.5-6-1.9 0-2.5 1.8-2.5 3.5 0 3.1 2 5.7 2 8.7V20a2 2 0 1 0 4 0Z"/></svg></span> Il percorso (2 Tappe nella giornata):</div>
+                    <div class="sub-step">
+                        <strong><span class="icon"><svg viewBox="0 0 24 24"><path d="M12 2v8"/><path d="m4.93 10.93 1.41 1.41"/><path d="M2 18h2"/><path d="M20 18h2"/><path d="m19.07 10.93-1.41 1.41"/><path d="M22 22H2"/><path d="m8 6 4-4 4 4"/><path d="M16 18a4 4 0 0 0-8 0"/></svg></span> Mattina (Serracozzo):</strong> Guidate fino al Rifugio Citelli (1.740 m). Da qui parte il sentiero di Serracozzo. Salendo attraverso un bosco di betulle bianche (uniche dell'Etna), troverete prima la <strong>Grotta di Serracozzo</strong> (un tubo lavico in cui si può entrare per qualche metro). Continuando a salire (dislivello di circa 400m), arriverete sull'orlo della <strong>Valle del Bove</strong>: una depressione vulcanica immensa, uno strapiombo spettacolare dove un tempo collassò un pezzo del vulcano. È il panorama più bello dell'Etna.
+                    </div>
+                    <div class="sub-step" style="margin-top: 10px;">
+                        <strong><span class="icon"><svg viewBox="0 0 24 24"><path d="M12 10V2"/><path d="m4.93 10.93 1.41 1.41"/><path d="M2 18h2"/><path d="M20 18h2"/><path d="m19.07 10.93-1.41 1.41"/><path d="M22 22H2"/><path d="m16 6-4 4-4-4"/><path d="M16 18a4 4 0 0 0-8 0"/></svg></span> Pomeriggio (Sartorius):</strong> Ripresa la macchina, scendete di pochi chilometri e fermatevi allo slargo per i <strong>Monti Sartorius</strong> (quota 1.660 m). È un percorso ad anello facile (circa 4 km) ma geologicamente bellissimo, che vi porta a camminare in cresta su sette crateri a "bottoniera" nati nel 1865.
+                    </div>
+                </div>
+
+                <div class="card-highlight highlight-est">
+                    <div><strong><span class="icon"><svg viewBox="0 0 24 24"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg></span> Perché sceglierlo:</strong> È la combinazione perfetta. Unisce un trekking con un po' di pendenza e panorami verticali (Serracozzo) a una facile passeggiata pomeridiana letteralmente sopra le bocche vulcaniche (Sartorius).</div>
+                </div>
+
+                <div class="card-footer-group">
+                    <div class="stats-box">
+                        <p><strong><span class="icon"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="4"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9"/></svg></span> Parcheggio:</strong> Rifugio Citelli (1.740 m) & Slargo Sartorius</p>
+                        <p><strong><span class="icon"><svg viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-1.1-.9-2-2-2h-1l-1.7-4.3A2 2 0 0 0 15.4 5H8.6a2 2 0 0 0-1.9 1.3L5 11H4c-1.1 0-2 .9-2 2v3c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg></span> Auto da Via Galatola:</strong> ~ 1h 10 min (43 km)</p>
+                        <p><strong><span class="icon"><svg viewBox="0 0 24 24"><path d="M4 16v-2.38C4 11.5 3 10.5 3 8c0-2.7 1.5-6 4.5-6 1.9 0 2.5 1.8 2.5 3.5 0 3.1-2 5.7-2 8.7V16a2 2 0 1 1-4 0Z"/><path d="M20 20v-2.38c0-2.12 1-3.12 1-5.62 0-2.7-1.5-6-4.5-6-1.9 0-2.5 1.8-2.5 3.5 0 3.1 2 5.7 2 8.7V20a2 2 0 1 0 4 0Z"/></svg></span> Trekking:</strong> ~ 8-9 km complessivi | Dislivello +400 m</p>
+                    </div>
+
+                    <div class="card-carousel" id="carousel-opt3">
+                        <div class="carousel-header">
+                            <span class="carousel-title"><span class="icon"><svg viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span> Gallery Percorso</span>
+                            <span class="carousel-counter" id="counter-opt3">1 / 11</span>
+                        </div>
+                        <div class="carousel-stage">
+                            <button class="carousel-btn prev" onclick="moveCarousel('opt3', -1, event)" title="Precedente">&#8249;</button>
+                            <button class="carousel-btn next" onclick="moveCarousel('opt3', 1, event)" title="Successiva">&#8250;</button>
+                            <div class="carousel-track" id="track-opt3">
+                                <div class="carousel-slide active" data-title="Sentiero Serracozzo dal Citelli" data-desc="La risalita dal Rifugio Citelli verso quota 2.000m lungo il ripido canalone di sabbia nera fiancheggiato dai cuscinetti di Spino Santo." onclick="openModal('images/Sentiero%20Serracozzo%20(Valle%20del%20Bove)/serracozzo-dal-rifugio-citelli_5f11.jpg', 'Sentiero Serracozzo dal Citelli', 'La risalita dal Rifugio Citelli verso quota 2.000m lungo il ripido canalone di sabbia nera fiancheggiato dai cuscinetti di Spino Santo.', event, 'opt3', 0)">
+                                    <img src="images/Sentiero%20Serracozzo%20(Valle%20del%20Bove)/serracozzo-dal-rifugio-citelli_5f11.jpg" alt="Sentiero Serracozzo dal Citelli" loading="lazy">
+                                    <div class="slide-caption">
+                                        <span class="slide-title">Sentiero Serracozzo dal Citelli</span>
+                                        <span class="slide-sub">Salita tra sabbie laviche e Spino Santo</span>
+                                    </div>
+                                </div>
+                                <div class="carousel-slide" data-title="Ingresso Grotta di Serracozzo" data-desc="La scenografica apertura superiore del tubo di lava formatosi nell\'eruzione del 1971, con il bosco di betulle sullo sfondo." onclick="openModal('images/Sentiero%20Serracozzo%20(Valle%20del%20Bove)/serracozzo-dal-rifugio-citelli_e2e9.jpg', 'Ingresso Grotta di Serracozzo', 'La scenografica apertura superiore del tubo di lava formatosi nell\'eruzione del 1971, con il bosco di betulle sullo sfondo.', event, 'opt3', 1)">
+                                    <img src="images/Sentiero%20Serracozzo%20(Valle%20del%20Bove)/serracozzo-dal-rifugio-citelli_e2e9.jpg" alt="Ingresso Grotta di Serracozzo" loading="lazy">
+                                    <div class="slide-caption">
+                                        <span class="slide-title">Ingresso Grotta di Serracozzo</span>
+                                        <span class="slide-sub">Il lucernario vulcanico con segnavia CAI</span>
+                                    </div>
+                                </div>
+                                <div class="carousel-slide" data-title="Dentro la Grotta di Serracozzo" data-desc="L\'interno maestoso della galleria di scorrimento lavico, alta diversi metri, scavata dal flusso magmatico del 1971." onclick="openModal('images/Sentiero%20Serracozzo%20(Valle%20del%20Bove)/etna_881396783.jpg', 'Dentro la Grotta di Serracozzo', 'L\'interno maestoso della galleria di scorrimento lavico, alta diversi metri, scavata dal flusso magmatico del 1971.', event, 'opt3', 2)">
+                                    <img src="images/Sentiero%20Serracozzo%20(Valle%20del%20Bove)/etna_881396783.jpg" alt="Interno Grotta di Serracozzo" loading="lazy">
+                                    <div class="slide-caption">
+                                        <span class="slide-title">Dentro la Grotta di Serracozzo</span>
+                                        <span class="slide-sub">La galleria a &quot;buco di serratura&quot;</span>
+                                    </div>
+                                </div>
+                                <div class="carousel-slide" data-title="Fascio di Luce nel Tubo Lavico" data-desc="Uno dei giochi di luce più fotografati dell\'Etna, quando la lama di luce solare penetra perpendicolare nella cavità basaltica." onclick="openModal('images/Sentiero%20Serracozzo%20(Valle%20del%20Bove)/grotta.jpg', 'Fascio di Luce nel Tubo Lavico', 'Uno dei giochi di luce più fotografati dell\'Etna, quando la lama di luce solare penetra perpendicolare nella cavità basaltica.', event, 'opt3', 3)">
+                                    <img src="images/Sentiero%20Serracozzo%20(Valle%20del%20Bove)/grotta.jpg" alt="Fascio di luce nella grotta" loading="lazy">
+                                    <div class="slide-caption">
+                                        <span class="slide-title">Fascio di Luce nel Tubo Lavico</span>
+                                        <span class="slide-sub">Raggio di sole dal lucernario della volta</span>
+                                    </div>
+                                </div>
+                                <div class="carousel-slide" data-title="Cresta di Serra delle Concazze" data-desc="Escursionisti in cammino lungo la cresta sommitale con vista vertiginosa sul mare di nubi e sulla costa ionica." onclick="openModal('images/Sentiero%20Serracozzo%20(Valle%20del%20Bove)/Trekking-alla-Grotta-di-Serracozzo-e-Valle-del-Bove-4.webp', 'Cresta di Serra delle Concazze', 'Escursionisti in cammino lungo la cresta sommitale con vista vertiginosa sul mare di nubi e sulla costa ionica.', event, 'opt3', 4)">
+                                    <img src="images/Sentiero%20Serracozzo%20(Valle%20del%20Bove)/Trekking-alla-Grotta-di-Serracozzo-e-Valle-del-Bove-4.webp" alt="Serra delle Concazze" loading="lazy">
+                                    <div class="slide-caption">
+                                        <span class="slide-title">Cresta di Serra delle Concazze</span>
+                                        <span class="slide-sub">In quota sul crinale sopra le nuvole</span>
+                                    </div>
+                                </div>
+                                <div class="carousel-slide" data-title="Affaccio Abissale sulla Valle del Bove" data-desc="L\'incredibile anfiteatro vulcanico della Valle del Bove a strapiombo per quasi 1.000 metri, dominato dalla cima fumante del Cratere di Sud-Est." onclick="openModal('images/Sentiero%20Serracozzo%20(Valle%20del%20Bove)/valle-del-bove-etna-2400x1350.jpg', 'Affaccio Abissale sulla Valle del Bove', 'L\'incredibile anfiteatro vulcanico della Valle del Bove a strapiombo per quasi 1.000 metri, dominato dalla cima fumante del Cratere di Sud-Est.', event, 'opt3', 5)">
+                                    <img src="images/Sentiero%20Serracozzo%20(Valle%20del%20Bove)/valle-del-bove-etna-2400x1350.jpg" alt="Affaccio Valle del Bove" loading="lazy">
+                                    <div class="slide-caption">
+                                        <span class="slide-title">Affaccio sulla Valle del Bove</span>
+                                        <span class="slide-sub">La caldera vulcanica e i crateri sommitali</span>
+                                    </div>
+                                </div>
+                                <div class="carousel-slide" data-title="Sentiero sui Dicchi Magmatici" data-desc="Camminando a fil di cresta tra antiche formazioni rocciose e dicchi magmatici che testimoniano i centri eruttivi primordiali." onclick="openModal('images/Sentiero%20Serracozzo%20(Valle%20del%20Bove)/valle-del-bove-vulcano-etna-2400x1350.jpg', 'Sentiero sui Dicchi Magmatici', 'Camminando a fil di cresta tra antiche formazioni rocciose e dicchi magmatici che testimoniano i centri eruttivi primordiali.', event, 'opt3', 6)">
+                                    <img src="images/Sentiero%20Serracozzo%20(Valle%20del%20Bove)/valle-del-bove-vulcano-etna-2400x1350.jpg" alt="Dicchi magmatici Valle del Bove" loading="lazy">
+                                    <div class="slide-caption">
+                                        <span class="slide-title">Sentiero sui Dicchi Magmatici</span>
+                                        <span class="slide-sub">L\'orlo frastagliato della grande caldera</span>
+                                    </div>
+                                </div>
+                                <div class="carousel-slide" data-title="Monti Sartorius &amp; Mar Ionio" data-desc="Tappa pomeridiana ai Monti Sartorius: la fila di sette coni piroclastici allineati con panorama aperto verso il mar Ionio e Taormina." onclick="openModal('images/Sentiero%20Serracozzo%20(Valle%20del%20Bove)/Etna-escursioni-didattiche-per-gli-alunni-con-le-guide-vulcanologiche-scaled.webp', 'Monti Sartorius &amp; Mar Ionio', 'Tappa pomeridiana ai Monti Sartorius: la fila di sette coni piroclastici allineati con panorama aperto verso il mar Ionio e Taormina.', event, 'opt3', 7)">
+                                    <img src="images/Sentiero%20Serracozzo%20(Valle%20del%20Bove)/Etna-escursioni-didattiche-per-gli-alunni-con-le-guide-vulcanologiche-scaled.webp" alt="Monti Sartorius e Mar Ionio" loading="lazy">
+                                    <div class="slide-caption">
+                                        <span class="slide-title">Monti Sartorius &amp; Mar Ionio</span>
+                                        <span class="slide-sub">La bottoniera del 1865 verso Taormina</span>
+                                    </div>
+                                </div>
+                                <div class="carousel-slide" data-title="Anello dei Coni Sartorius" data-desc="Passeggiata panoramica sul percorso ad anello che risale le creste scoriacee e i crateri spenti punteggiati da giovani pini dell\'Etna." onclick="openModal('images/Sentiero%20Serracozzo%20(Valle%20del%20Bove)/Atna-Bildungsausfluge-fur-Schulen-scaled.webp', 'Anello dei Coni Sartorius', 'Passeggiata panoramica sul percorso ad anello che risale le creste scoriacee e i crateri spenti punteggiati da giovani pini dell\'Etna.', event, 'opt3', 8)">
+                                    <img src="images/Sentiero%20Serracozzo%20(Valle%20del%20Bove)/Atna-Bildungsausfluge-fur-Schulen-scaled.webp" alt="Anello Monti Sartorius" loading="lazy">
+                                    <div class="slide-caption">
+                                        <span class="slide-title">Anello dei Coni Sartorius</span>
+                                        <span class="slide-sub">Sentiero tra scorie vulcaniche e pini larici</span>
+                                    </div>
+                                </div>
+                                <div class="carousel-slide" data-title="Crateri a Bottoniera dei Sartorius" data-desc="L\'inconfondibile cono vulcanico dei Sartorius nato nell\'eruzione del 1865, facilmente accessibile a grandi e piccoli." onclick="openModal('images/Sentiero%20Serracozzo%20(Valle%20del%20Bove)/caption.jpg', 'Crateri a Bottoniera dei Sartorius', 'L\'inconfondibile cono vulcanico dei Sartorius nato nell\'eruzione del 1865, facilmente accessibile a grandi e piccoli.', event, 'opt3', 9)">
+                                    <img src="images/Sentiero%20Serracozzo%20(Valle%20del%20Bove)/caption.jpg" alt="Crateri dei Sartorius" loading="lazy">
+                                    <div class="slide-caption">
+                                        <span class="slide-title">Crateri a Bottoniera dei Sartorius</span>
+                                        <span class="slide-sub">L\'orlo craterico del cono principale</span>
+                                    </div>
+                                </div>
+                                <div class="carousel-slide" data-title="Panorama Orientale dai Sartorius" data-desc="Lo sguardo spazia dalla bottoniera dei crateri fino al mare azzurro attraversando la grande pineta d\'alta quota." onclick="openModal('images/Sentiero%20Serracozzo%20(Valle%20del%20Bove)/9b33f77c5c6cbb3d1708c688cd147408560b6bf8c6a48f4011a98667e11537e5.avif', 'Panorama Orientale dai Sartorius', 'Lo sguardo spazia dalla bottoniera dei crateri fino al mare azzurro attraversando la grande pineta d\'alta quota.', event, 'opt3', 10)">
+                                    <img src="images/Sentiero%20Serracozzo%20(Valle%20del%20Bove)/9b33f77c5c6cbb3d1708c688cd147408560b6bf8c6a48f4011a98667e11537e5.avif" alt="Panorama Orientale Sartorius" loading="lazy">
+                                    <div class="slide-caption">
+                                        <span class="slide-title">Panorama Orientale dai Sartorius</span>
+                                        <span class="slide-sub">Contrasto tra sabbie nere, pineta e cielo</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-dots" id="dots-opt3">
+                            <span class="dot active" onclick="setCarouselSlide('opt3', 0, event)" title="Foto 1"></span>
+                            <span class="dot" onclick="setCarouselSlide('opt3', 1, event)" title="Foto 2"></span>
+                            <span class="dot" onclick="setCarouselSlide('opt3', 2, event)" title="Foto 3"></span>
+                            <span class="dot" onclick="setCarouselSlide('opt3', 3, event)" title="Foto 4"></span>
+                            <span class="dot" onclick="setCarouselSlide('opt3', 4, event)" title="Foto 5"></span>
+                            <span class="dot" onclick="setCarouselSlide('opt3', 5, event)" title="Foto 6"></span>
+                            <span class="dot" onclick="setCarouselSlide('opt3', 6, event)" title="Foto 7"></span>
+                            <span class="dot" onclick="setCarouselSlide('opt3', 7, event)" title="Foto 8"></span>
+                            <span class="dot" onclick="setCarouselSlide('opt3', 8, event)" title="Foto 9"></span>
+                            <span class="dot" onclick="setCarouselSlide('opt3', 9, event)" title="Foto 10"></span>
+                            <span class="dot" onclick="setCarouselSlide('opt3', 10, event)" title="Foto 11"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Sezione Consigli per l'Etna -->
+    <div class="tips-container">
+        <h2><span class="icon icon-lg"><svg viewBox="0 0 24 24"><path d="M4 10a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"/><path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><path d="M8 21v-5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v5"/></svg></span> Alcuni consigli per l'Etna</h2>
+        <div class="tips-grid">
+            <div class="tip-card">
+                <h4><span class="icon-circle blue"><svg viewBox="0 0 24 24"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></svg></span> Vento e Temperatura</h4>
+                <p>Anche se a Catania a metà settembre farà molto caldo, a 2.500 metri sull'Etna potreste trovare <strong>10-15 gradi e un vento fortissimo</strong>. Portate uno zaino con pile, guscio antivento e, fondamentale, <strong>occhiali da sole</strong> (anche per proteggere gli occhi dalla polvere lavica sollevata dal vento).</p>
+            </div>
+            <div class="tip-card">
+                <h4><span class="icon-circle amber"><svg viewBox="0 0 24 24"><path d="M4 16v-2.38C4 11.5 3 10.5 3 8c0-2.7 1.5-6 4.5-6 1.9 0 2.5 1.8 2.5 3.5 0 3.1-2 5.7-2 8.7V16a2 2 0 1 1-4 0Z"/><path d="M20 20v-2.38c0-2.12 1-3.12 1-5.62 0-2.7-1.5-6-4.5-6-1.9 0-2.5 1.8-2.5 3.5 0 3.1 2 5.7 2 8.7V20a2 2 0 1 0 4 0Z"/></svg></span> Scarpe</h4>
+                <p>Sapendo che siete abituati a percorsi come il Capo Vaticano o i trekking in montagna, avrete sicuramente scarpe adatte. Sull'Etna lo <strong>scarpone da trekking sopra la caviglia</strong> è l'ideale, perché la sabbia vulcanica entra ovunque se si usano scarpe basse.</p>
+            </div>
+            <div class="tip-card">
+                <h4><span class="icon-circle red"><svg viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></span> Controllate le allerte</h4>
+                <p>L'Etna è viva e cambia idea spesso. Un giorno o due prima dell'escursione, controllate se ci sono <strong>ordinanze sindacali</strong> dei comuni di Nicolosi (Sud) o Castiglione di Sicilia (Nord) che limitano l'altitudine per via di eventuale attività stromboliana o emissioni di cenere.</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-line"><span class="icon"><svg viewBox="0 0 24 24"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></svg></span> <strong>Trekking Etna 2026</strong></div>
+    </footer>
+
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+        // Inizializzazione Mappa
+        const map = L.map('map').setView([37.65, 15.05], 10);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        // Coordinate Chiave
+const coords = {
+            hotel: [37.5037, 15.0828],          // Alloggio: Via Crescenzio Galatola 19, Catania
+            parkNord: [37.7983, 15.0374],       // Parcheggio Piano Provenzana
+            parkSud: [37.6993, 15.0008],        // Parcheggio Piazzale Rifugio Sapienza
+            parkEst1: [37.7651, 15.0597],       // Parcheggio Rifugio Citelli (Serracozzo - Mattina)
+            parkEst2: [37.7719, 15.0600]        // Slargo Monti Sartorius (Pomeriggio)
+        };
+
+        // Icone Personalizzate
+        const hotelIcon = L.divIcon({
+            html: '<div style="background:#dc2626;color:#fff;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 3px 8px rgba(0,0,0,0.3);"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>',
+            className: '',
+            iconSize: [34, 34],
+            iconAnchor: [17, 17]
+        });
+
+        function createPin(color, symbol) {
+            return L.divIcon({
+                html: `<div style="background:${color};color:#fff;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;border:2px solid #fff;box-shadow:0 3px 8px rgba(0,0,0,0.3);">${symbol}</div>`,
+                className: '',
+                iconSize: [30, 30],
+                iconAnchor: [15, 15]
+            });
+        }
+
+        // Marker sulla Mappa
+        const markerHotel = L.marker(coords.hotel, { icon: hotelIcon }).addTo(map)
+            .bindPopup('<strong>Base di Partenza:</strong><br>Via Crescenzio Galatola 19, Catania');
+
+        const markerNord = L.marker(coords.parkNord, { icon: createPin('#2563eb', 'P1') }).addTo(map)
+            .bindPopup('<strong>Parcheggio Opzione 1:</strong><br>Piano Provenzana (1.810 m)<br><em>Bottoniera 2002 & Monte Nero</em>');
+
+        const markerSud = L.marker(coords.parkSud, { icon: createPin('#d97706', 'P2') }).addTo(map)
+            .bindPopup('<strong>Parcheggio Opzione 2:</strong><br>Piazzale Rifugio Sapienza (1.900 m)<br><em>Crateri Silvestri, Cratere 2001 & Quota 2.500m</em>');
+
+        const markerEst1 = L.marker(coords.parkEst1, { icon: createPin('#059669', '3A') }).addTo(map)
+            .bindPopup('<strong>Opzione 3 • Mattina (Tappa 1):</strong><br>Rifugio Citelli (1.740 m)<br><em>Partenza Sentiero Serracozzo & Valle del Bove</em>');
+
+        const markerEst2 = L.marker(coords.parkEst2, { icon: createPin('#059669', '3B') }).addTo(map)
+            .bindPopup('<strong>Opzione 3 • Pomeriggio (Tappa 2):</strong><br>Slargo Monti Sartorius (1.660 m)<br><em>Partenza Anello Crateri a Bottoniera</em>');
+
+        // Tracciati Stradali (Approssimazione fedele della rete viaria principale)
+        const roadNord = [
+            coords.hotel,
+            [37.5250, 15.0920], [37.5400, 15.1100], [37.5600, 15.1250], [37.6200, 15.1480],
+            [37.7200, 15.1780], [37.7850, 15.1950], [37.8000, 15.1750], [37.8420, 15.1420],
+            [37.8380, 15.1050], [37.8280, 15.0750], [37.8080, 15.0550], coords.parkNord
+        ];
+
+        const roadSud = [
+            coords.hotel,
+            [37.5180, 15.0845], [37.5330, 15.0780], [37.5580, 15.0680], [37.5750, 15.0530],
+            [37.6050, 15.0380], [37.6250, 15.0280], [37.6400, 15.0180], [37.6600, 15.0130],
+            [37.6750, 15.0080], coords.parkSud
+        ];
+
+        const roadEst = [
+            coords.hotel,
+            [37.5250, 15.0920], [37.5400, 15.1100], [37.5600, 15.1250], [37.6200, 15.1480],
+            [37.6800, 15.1200], [37.7080, 15.1080], [37.7300, 15.0900], [37.7550, 15.0750],
+            coords.parkEst1
+        ];
+
+        // Tracciati Sentieri a Piedi
+        const trekNord = [
+            coords.parkNord,
+            [37.8010, 15.0330], [37.8035, 15.0280], [37.8050, 15.0210],
+            [37.8040, 15.0150], [37.8020, 15.0120], [37.7990, 15.0160],
+            [37.7970, 15.0230], coords.parkNord
+        ];
+
+        const trekSud = [
+            coords.parkSud,
+            [37.7020, 15.0000], [37.7060, 14.9990], [37.7110, 14.9970],
+            [37.7160, 14.9980], [37.7210, 15.0000], [37.7240, 14.9980]
+        ];
+
+        const trekSerracozzo = [
+            coords.parkEst1,
+            [37.7660, 15.0560], [37.7675, 15.0510], [37.7690, 15.0450],
+            [37.7710, 15.0380], [37.7730, 15.0320], [37.7745, 15.0280]
+        ];
+
+        const trekSartorius = [
+            coords.parkEst2,
+            [37.7725, 15.0540],
+            [37.7735, 15.0505],
+            [37.7755, 15.0478],
+            [37.7780, 15.0460],
+            [37.7800, 15.0485],
+            [37.7795, 15.0525],
+            [37.7770, 15.0560],
+            [37.7740, 15.0575],
+            coords.parkEst2
+        ];
+
+        const roadEstIntermezzo = [
+            coords.parkEst1,
+            [37.7665, 15.0605],
+            [37.7685, 15.0610],
+            [37.7705, 15.0608],
+            coords.parkEst2
+        ];
+
+        const trekEst = [
+            coords.parkEst1,
+            [37.7660, 15.0560],
+            [37.7675, 15.0510],
+            [37.7690, 15.0450],
+            [37.7710, 15.0380],
+            [37.7730, 15.0320],
+            [37.7745, 15.0280],
+            [37.7730, 15.0320],
+            [37.7710, 15.0380],
+            [37.7690, 15.0450],
+            [37.7675, 15.0510],
+            [37.7660, 15.0560],
+            coords.parkEst1,
+            [37.7665, 15.0605],
+            [37.7685, 15.0610],
+            [37.7705, 15.0608],
+            coords.parkEst2,
+            [37.7740, 15.0575],
+            [37.7770, 15.0560],
+            [37.7795, 15.0525],
+            [37.7800, 15.0485],
+            [37.7780, 15.0460],
+            [37.7755, 15.0478],
+            [37.7735, 15.0505],
+            [37.7725, 15.0540],
+            coords.parkEst2
+        ];
+
+        // Polilinee Leaflet
+        const polyNord = L.polyline(roadNord, { color: '#2563eb', weight: 4, opacity: 0.85 }).addTo(map);
+        const polySud = L.polyline(roadSud, { color: '#d97706', weight: 4, opacity: 0.85 }).addTo(map);
+        const polyEst = L.polyline(roadEst, { color: '#059669', weight: 4, opacity: 0.85 }).addTo(map);
+
+        const polyTrekNord = L.polyline(trekNord, { color: '#2563eb', dashArray: '6, 8', weight: 3 }).addTo(map)
+            .bindTooltip('Trekking Nord: Bottoniera 2002 & Monte Nero', { sticky: true });
+
+        const polyTrekSud = L.polyline(trekSud, { color: '#d97706', dashArray: '6, 8', weight: 3 }).addTo(map)
+            .bindTooltip('Trekking Sud: Salita Cratere 2001 & Quota 2.500m', { sticky: true });
+
+        const polyTrekSerracozzo = L.polyline(trekSerracozzo, { color: '#059669', dashArray: '6, 8', weight: 3.5 }).addTo(map)
+            .bindTooltip('Mattina: Sentiero Serracozzo (Grotta e Valle del Bove)', { sticky: true });
+
+        const polyTrekSartorius = L.polyline(trekSartorius, { color: '#059669', dashArray: '6, 8', weight: 3.5 }).addTo(map)
+            .bindTooltip('Pomeriggio: Anello Monti Sartorius (Crateri a bottoniera)', { sticky: true });
+
+        const polyTrekEst = L.featureGroup([polyTrekSerracozzo, polyTrekSartorius]);
+
+        // Dati Scheda Informativa
+        const infoData = {
+            all: {
+                title: "Panoramica di tutti i tragitti",
+                dest: "Visualizzazione delle 3 alternative da Catania",
+                time: "Da 55 min a 1h 20 min in base all'itinerario",
+                dist: "35 km - 55 km",
+                trek: "Seleziona un'opzione specifica per i dettagli",
+                link: "https://maps.app.goo.gl/Qe7YGNqUH9PDTjKD8"
+            },
+            opt1: {
+                title: "Opzione 1: Versante Nord (Bottoniera 2002 & Monte Nero)",
+                dest: "Parcheggio Piano Provenzana (1.810 m), Linguaglossa",
+                time: "1h 20 min (circa)",
+                dist: "55 km (via A18 / Linguaglossa)",
+                trek: "Anello 5-7 km • Dislivello +400/500 m (Bottoniera 2002, Monte Nero, Pineta Ragabo)",
+                link: "https://www.google.com/maps/dir/?api=1&origin=Via+Crescenzio+Galatola+19,+Catania&destination=Piano+Provenzana,+Linguaglossa"
+            },
+            opt2: {
+                title: "Opzione 2: Versante Sud (Rifugio Sapienza & Quota 2.500m)",
+                dest: "Piazzale Rifugio Sapienza (1.900 m), Nicolosi",
+                time: "55 min (circa)",
+                dist: "35 km (via Nicolosi / SP92)",
+                trek: "Salita a piedi 7-9 km a/r • Dislivello +600/800 m (Cratere 2001, Quota 2.500m/2.700m)",
+                link: "https://www.google.com/maps/dir/?api=1&origin=Via+Crescenzio+Galatola+19,+Catania&destination=Piazzale+Rifugio+Sapienza,+Nicolosi"
+            },
+            opt3: {
+                title: "Opzione 3: Escursione Mista (Serracozzo & Monti Sartorius)",
+                dest: "Rifugio Citelli (1.740 m) + Slargo Monti Sartorius (1.660 m)",
+                time: "1h 10 min (circa)",
+                dist: "43 km (via Zafferana / Milo)",
+                trek: "2 Tappe: Serracozzo (+400 m, Grotta e affaccio Valle del Bove) + Sartorius (4 km in cresta)",
+                link: "https://www.google.com/maps/dir/?api=1&origin=Via+Crescenzio+Galatola+19,+Catania&destination=Rifugio+Citelli,+Sant'Alfio"
+            }
+        };
+
+        // Funzione di selezione interattiva
+        function selectRoute(routeKey) {
+            // Aggiorna bottoni
+            document.querySelectorAll('.btn-select').forEach(b => {
+                b.classList.toggle('active', b.getAttribute('data-target') === routeKey);
+            });
+
+            // Aggiorna card
+            document.querySelectorAll('.card').forEach(c => {
+                c.classList.toggle('active-card', c.id === 'card-' + routeKey);
+            });
+
+            // Aggiorna testo pannello laterale
+            const data = infoData[routeKey];
+            document.getElementById('panel-title').innerText = data.title;
+            document.getElementById('panel-dest').innerText = data.dest;
+            document.getElementById('panel-time').innerText = data.time;
+            document.getElementById('panel-dist').innerText = data.dist;
+            document.getElementById('panel-trek').innerText = data.trek;
+            document.getElementById('panel-gmaps-link').href = data.link;
+
+            // Gestione evidenziazione linee e zoom mappa
+            if (routeKey === 'all') {
+                polyNord.setStyle({ opacity: 0.8, weight: 4 });
+                polySud.setStyle({ opacity: 0.8, weight: 4 });
+                polyEst.setStyle({ opacity: 0.8, weight: 4 });
+                polyTrekNord.setStyle({ opacity: 0.8 });
+                polyTrekSud.setStyle({ opacity: 0.8 });
+                polyTrekEst.setStyle({ opacity: 0.8 });
+                map.setView([37.65, 15.05], 10);
+            } else {
+                // Dissolvi tutte
+                polyNord.setStyle({ opacity: 0.15, weight: 3 });
+                polySud.setStyle({ opacity: 0.15, weight: 3 });
+                polyEst.setStyle({ opacity: 0.15, weight: 3 });
+                polyTrekNord.setStyle({ opacity: 0.1 });
+                polyTrekSud.setStyle({ opacity: 0.1 });
+                polyTrekEst.setStyle({ opacity: 0.1 });
+
+                // Evidenzia e inquadra la selezionata
+                if (routeKey === 'opt1') {
+                    polyNord.setStyle({ opacity: 1, weight: 6 });
+                    polyTrekNord.setStyle({ opacity: 1 });
+                    map.fitBounds(polyNord.getBounds(), { padding: [40, 40] });
+                    markerNord.openPopup();
+                } else if (routeKey === 'opt2') {
+                    polySud.setStyle({ opacity: 1, weight: 6 });
+                    polyTrekSud.setStyle({ opacity: 1 });
+                    map.fitBounds(polySud.getBounds(), { padding: [40, 40] });
+                    markerSud.openPopup();
+                } else if (routeKey === 'opt3') {
+                    polyEst.setStyle({ opacity: 1, weight: 6 });
+                    polyTrekEst.setStyle({ opacity: 1 });
+                    map.fitBounds(polyEst.getBounds(), { padding: [40, 40] });
+                    markerEst1.openPopup();
+                }
+            }
+        }
+
+        // Gestione Caroselli Gallery nelle Card
+        const carouselStates = {
+            opt1: 0,
+            opt2: 0,
+            opt3: 0
+        };
+
+        function moveCarousel(id, delta, event) {
+            if (event) {
+                event.stopPropagation();
+            }
+            const track = document.getElementById('track-' + id);
+            if (!track) return;
+            const slides = track.querySelectorAll('.carousel-slide');
+            const total = slides.length;
+            if (total === 0) return;
+
+            let nextIndex = (carouselStates[id] + delta) % total;
+            if (nextIndex < 0) nextIndex = total - 1;
+            setCarouselSlide(id, nextIndex, event);
+        }
+
+        function setCarouselSlide(id, index, event) {
+            if (event) {
+                event.stopPropagation();
+            }
+            const track = document.getElementById('track-' + id);
+            const dotsContainer = document.getElementById('dots-' + id);
+            const counter = document.getElementById('counter-' + id);
+            if (!track) return;
+
+            const slides = track.querySelectorAll('.carousel-slide');
+            const dots = dotsContainer ? dotsContainer.querySelectorAll('.dot') : [];
+            const total = slides.length;
+            if (index < 0 || index >= total) return;
+
+            carouselStates[id] = index;
+
+            slides.forEach((slide, idx) => {
+                slide.classList.toggle('active', idx === index);
+            });
+
+            dots.forEach((dot, idx) => {
+                dot.classList.toggle('active', idx === index);
+            });
+
+            if (counter) {
+                counter.innerText = (index + 1) + ' / ' + total;
+            }
+        }
+
+        // Gestione Lightbox Modal per Gallery Immagini con navigazione interattiva
+        let currentModalOpt = null;
+        let currentModalIndex = 0;
+
+        function openModal(imgSrc, title, desc, event, optId, slideIndex) {
+            if (event) {
+                event.stopPropagation();
+            }
+            currentModalOpt = optId || null;
+            currentModalIndex = (typeof slideIndex === 'number') ? slideIndex : 0;
+            renderModalSlide(imgSrc, title, desc);
+            document.getElementById('image-modal').classList.add('open');
+        }
+
+        function renderModalSlide(imgSrc, title, desc) {
+            document.getElementById('modal-img').src = imgSrc;
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-desc').innerText = desc;
+
+            const badge = document.getElementById('modal-counter');
+            const prevBtn = document.getElementById('modal-prev-btn');
+            const nextBtn = document.getElementById('modal-next-btn');
+
+            if (currentModalOpt) {
+                const track = document.getElementById('track-' + currentModalOpt);
+                const slides = track ? track.querySelectorAll('.carousel-slide') : [];
+                if (slides.length > 1) {
+                    badge.innerText = (currentModalIndex + 1) + ' / ' + slides.length;
+                    badge.style.display = 'inline-block';
+                    if (prevBtn) prevBtn.style.display = 'flex';
+                    if (nextBtn) nextBtn.style.display = 'flex';
+                } else {
+                    badge.style.display = 'none';
+                    if (prevBtn) prevBtn.style.display = 'none';
+                    if (nextBtn) nextBtn.style.display = 'none';
+                }
+            } else {
+                badge.style.display = 'none';
+                if (prevBtn) prevBtn.style.display = 'none';
+                if (nextBtn) nextBtn.style.display = 'none';
+            }
+        }
+
+        function navigateModal(delta, event) {
+            if (event) {
+                event.stopPropagation();
+            }
+            if (!currentModalOpt) return;
+            const track = document.getElementById('track-' + currentModalOpt);
+            if (!track) return;
+            const slides = track.querySelectorAll('.carousel-slide');
+            if (slides.length === 0) return;
+
+            currentModalIndex = (currentModalIndex + delta + slides.length) % slides.length;
+            const targetSlide = slides[currentModalIndex];
+            if (!targetSlide) return;
+
+            const img = targetSlide.querySelector('img');
+            const title = targetSlide.getAttribute('data-title') || (targetSlide.querySelector('.slide-title') ? targetSlide.querySelector('.slide-title').innerText : '');
+            const desc = targetSlide.getAttribute('data-desc') || '';
+            const src = img ? img.getAttribute('src') : '';
+
+            renderModalSlide(src, title, desc);
+            setCarouselSlide(currentModalOpt, currentModalIndex);
+        }
+
+        function closeModal() {
+            document.getElementById('image-modal').classList.remove('open');
+        }
+
+        document.addEventListener('keydown', function (e) {
+            const modal = document.getElementById('image-modal');
+            if (!modal || !modal.classList.contains('open')) return;
+
+            if (e.key === 'Escape') {
+                closeModal();
+            } else if (e.key === 'ArrowLeft') {
+                navigateModal(-1);
+            } else if (e.key === 'ArrowRight') {
+                navigateModal(1);
+            }
+        });
+    </script>
+
+    <!-- Modal Ingrandimento Immagini Gallery -->
+    <div id="image-modal" class="image-modal-overlay" onclick="closeModal()">
+        <div class="image-modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close-btn" onclick="closeModal()" title="Chiudi (Esc)">&times;</button>
+            <div class="modal-image-wrapper">
+                <button id="modal-prev-btn" class="modal-nav-btn prev" onclick="navigateModal(-1, event)" title="Foto precedente (Freccia Sinistra)">&#8249;</button>
+                <button id="modal-next-btn" class="modal-nav-btn next" onclick="navigateModal(1, event)" title="Foto successiva (Freccia Destra)">&#8250;</button>
+                <img id="modal-img" src="" alt="Dettaglio Immagine Etna">
+            </div>
+            <div class="modal-details">
+                <div class="modal-header-row">
+                    <h3 id="modal-title"></h3>
+                    <span id="modal-counter" class="modal-counter-badge"></span>
+                </div>
+                <p id="modal-desc"></p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
