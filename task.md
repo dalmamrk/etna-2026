@@ -16,3 +16,4 @@
 - `[x]` Ottimizzazione e verifica responsiva per Smartphone (iPhone / Android: 360px - 430px): layout monocollonna, filtri swipe orizzontale touch, mappa adattiva 300px, touch target carosello e modal a schermo intero con simulatore `mobile_preview.html`
 - `[x]` Pubblicazione repository su GitHub (`dalmamrk/etna-2026`)
 - `[x]` Attivazione e verifica URL pubblica con GitHub Pages: `https://dalmamrk.github.io/etna-2026/`
+- `[x]` Ottimizzazione bottoni mobile sopra la mappa su una sola riga: etichette brevi `TUTTI`, `NORD`, `SUD`, `MISTO` perfettamente bilanciate in stile tab bar native
