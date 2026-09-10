@@ -17,3 +17,4 @@
 - `[x]` Pubblicazione repository su GitHub (`dalmamrk/etna-2026`)
 - `[x]` Attivazione e verifica URL pubblica con GitHub Pages: `https://dalmamrk.github.io/etna-2026/`
 - `[x]` Ottimizzazione bottoni mobile sopra la mappa su una sola riga: etichette brevi `TUTTI`, `NORD`, `SUD`, `MISTO` perfettamente bilanciate in stile tab bar native
+- `[x]` Integrazione Google My Maps interattiva: selettore di vista Leaflet / My Maps con iframe navigabile incorporato, pulsante 'Apri in Google Maps (iPhone)' e box dedicato in Card 3 con smooth scroll e link rapido per navigazione su smartphone

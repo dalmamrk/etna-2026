@@ -114,6 +114,13 @@ Tutte le fotografie provengono direttamente dalle sottocartelle locali dentro `i
    - Sincronizzazione automatica tra il modal e la slide della card sottostante.
    - Adattivo su mobile (`max-height: 92vh` con overflow interno scrollabile).
 
+6. **Integrazione Google My Maps & Navigazione Smartphone (iPhone)**:
+   - **Selettore Modalità Mappa (`.map-mode-bar`)**: posizionato sopra la mappa, consente di passare istantaneamente tra la `Mappa Interattiva (GPS Live)` offline di Leaflet e la vista ufficiale `Google My Maps` del Sentiero Serracozzo.
+   - **Iframe Interattivo Incorporato**: carica la mappa personalizzata di Google con traccia, punti d'interesse e legenda georeferenziata, con lazy loading (`data-src`) per non consumare traffico o bloccare il rendering iniziale offline.
+   - **Apertura Nativa su iPhone / Google Maps**: pulsante dedicato `"Apri in Google Maps (iPhone)"` (`https://www.google.com/maps/d/viewer?mid=195sYkebfw2Gy6YnY_fHVYr63Jk5jeug`) per salvare la mappa nel profilo Google e seguirla sul campo con il GPS nativo dell'app.
+   - **Callout Dedicato in Card 3**: box ad alta visibilità nella scheda dell'Opzione 3 con duplice azione ("Apri Mappa su iPhone" e "Naviga nella Mappa del Sito" con auto-scroll morbido).
+   - **Pannello Dati Sincronizzato**: pulsante rapido `Google My Maps (Serracozzo)` nel pannello informativo laterale della mappa.
+
 ---
 
 ## 🗺️ Formati Traccia GPS & KML per App Esterne

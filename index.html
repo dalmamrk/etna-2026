@@ -251,10 +251,150 @@
             grid-template-columns: 1fr 340px;
         }
 
-        #map {
+        /* Colonna Mappa e Switcher Modalità (Leaflet GPS vs Google My Maps) */
+        .map-col {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            min-width: 0;
+            background: #0f172a;
+        }
+
+        .map-mode-bar {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 8px;
+            padding: 8px 14px;
+            background: #0f172a;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            flex-wrap: wrap;
+        }
+
+        .btn-mode {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.05);
+            color: #cbd5e1;
+            font-family: inherit;
+            font-size: 0.82em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn-mode:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .btn-mode.active {
+            background: #2563eb;
+            border-color: #3b82f6;
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-mode#btn-mode-mymaps.active {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            border-color: #10b981;
+            box-shadow: 0 2px 8px rgba(5, 150, 105, 0.4);
+        }
+
+        .btn-mode .icon {
+            width: 15px;
+            height: 15px;
+        }
+
+        .mode-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.72em;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+        }
+
+        .map-viewport {
+            position: relative;
             width: 100%;
             height: 520px;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
             z-index: 1;
+        }
+
+        .mymaps-view {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background: #0f172a;
+            position: relative;
+            z-index: 1;
+        }
+
+        .mymaps-banner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 14px;
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .mymaps-banner-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            color: #cbd5e1;
+            font-size: 0.8em;
+        }
+
+        .mymaps-banner-info strong {
+            color: #ffffff;
+            font-size: 0.92em;
+        }
+
+        .btn-mymaps-open {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 12px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 0.8em;
+            font-weight: 700;
+            border-radius: 6px;
+            white-space: nowrap;
+            box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .btn-mymaps-open:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.4);
+            filter: brightness(1.05);
+        }
+
+        .mymaps-view iframe {
+            flex: 1;
+            width: 100%;
+            height: 100%;
+            border: none;
         }
 
         .route-info-panel {
@@ -309,6 +449,143 @@
         .btn-gmaps:hover {
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-mymaps-panel {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+            color: white;
+            text-decoration: none;
+            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 0.88em;
+            margin-top: 8px;
+            transition: all 0.2s;
+            box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3);
+        }
+
+        .btn-mymaps-panel:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(2, 132, 199, 0.4);
+        }
+
+        /* Callout Box My Maps speciale nella card 3 */
+        .card-mymaps-box {
+            background: linear-gradient(135deg, rgba(5, 150, 105, 0.08) 0%, rgba(14, 165, 233, 0.08) 100%);
+            border: 1.5px solid rgba(16, 185, 129, 0.35);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            margin: 16px 0;
+            transition: all 0.3s ease;
+        }
+
+        .card-mymaps-box:hover {
+            border-color: rgba(16, 185, 129, 0.6);
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.15);
+        }
+
+        .mymaps-badge-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .mymaps-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #059669;
+            color: #ffffff;
+            font-size: 0.72em;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 4px;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+
+        .mymaps-sync-tag {
+            font-size: 0.78em;
+            color: #047857;
+            font-weight: 600;
+        }
+
+        .card-mymaps-box h4 {
+            margin: 0 0 6px 0;
+            color: var(--dark);
+            font-size: 1.05em;
+            font-weight: 700;
+        }
+
+        .card-mymaps-box p {
+            margin: 0 0 12px 0;
+            color: var(--muted);
+            font-size: 0.86em;
+            line-height: 1.45;
+        }
+
+        .mymaps-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-mymaps-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: #ffffff;
+            text-decoration: none;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.85em;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+            flex: 1;
+            min-width: 170px;
+            text-align: center;
+        }
+
+        .btn-mymaps-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+            filter: brightness(1.06);
+        }
+
+        .btn-mymaps-secondary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background: var(--surface);
+            color: var(--dark);
+            border: 1.5px solid var(--border);
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex: 1;
+            min-width: 170px;
+            text-align: center;
+        }
+
+        .btn-mymaps-secondary:hover {
+            background: var(--surface-alt);
+            border-color: #94a3b8;
+            transform: translateY(-1px);
         }
 
         /* Card Dettaglio */
@@ -969,7 +1246,7 @@
                 border-radius: 0;
             }
 
-            #map {
+            .map-viewport {
                 height: 380px;
             }
 
@@ -1040,8 +1317,47 @@
             }
 
             /* Mappa e Pannello Info */
-            #map {
-                height: 300px;
+            .map-viewport {
+                height: 320px;
+            }
+
+            .map-mode-bar {
+                padding: 6px 10px;
+                gap: 6px;
+            }
+
+            .btn-mode {
+                padding: 6px 10px;
+                font-size: 0.76em;
+            }
+
+            .mymaps-banner {
+                padding: 6px 10px;
+                gap: 6px;
+            }
+
+            .mymaps-banner-info strong {
+                font-size: 0.84em;
+            }
+
+            .mymaps-banner-info span {
+                display: none;
+            }
+
+            .btn-mymaps-open {
+                padding: 5px 8px;
+                font-size: 0.74em;
+            }
+
+            .mymaps-actions {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .btn-mymaps-primary,
+            .btn-mymaps-secondary {
+                width: 100%;
+                min-width: 0;
             }
 
             .route-info-panel {
@@ -1282,6 +1598,10 @@
                 gap: 4px;
             }
 
+            .map-viewport {
+                height: 290px;
+            }
+
             .btn-select {
                 padding: 7px 2px;
                 font-size: 0.72em;
@@ -1470,7 +1790,35 @@
 
     <!-- Sezione Mappa e Pannello Dati -->
     <div class="map-section">
-        <div id="map"></div>
+        <div class="map-col">
+            <div class="map-mode-bar">
+                <button type="button" id="btn-mode-leaflet" class="btn-mode active" onclick="switchMapView('leaflet')">
+                    <span class="icon"><svg viewBox="0 0 24 24"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg></span>
+                    <span>Mappa Interattiva (GPS Live)</span>
+                </button>
+                <button type="button" id="btn-mode-mymaps" class="btn-mode" onclick="switchMapView('mymaps')">
+                    <span class="icon"><svg viewBox="0 0 24 24"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg></span>
+                    <span>Google My Maps</span>
+                    <span class="mode-badge">Serracozzo</span>
+                </button>
+            </div>
+            <div class="map-viewport">
+                <div id="map"></div>
+                <div id="mymaps-view" class="mymaps-view" style="display: none;">
+                    <div class="mymaps-banner">
+                        <div class="mymaps-banner-info">
+                            <strong>Traccia Google My Maps: Sentiero Serracozzo</strong>
+                            <span>Navigabile online • Condivisibile con iPhone</span>
+                        </div>
+                        <a href="https://www.google.com/maps/d/viewer?mid=195sYkebfw2Gy6YnY_fHVYr63Jk5jeug" target="_blank" class="btn-mymaps-open" title="Apri a tutto schermo o nell'app Google Maps su iPhone">
+                            <span class="icon"><svg viewBox="0 0 24 24"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></span>
+                            <span>Apri in Google Maps (iPhone)</span>
+                        </a>
+                    </div>
+                    <iframe id="mymaps-iframe" src="" data-src="https://www.google.com/maps/d/embed?mid=195sYkebfw2Gy6YnY_fHVYr63Jk5jeug&ehbc=2E312F&noprof=1" width="100%" height="100%" frameborder="0" style="border:0;" allowfullscreen loading="lazy"></iframe>
+                </div>
+            </div>
+        </div>
         <div class="route-info-panel">
             <div>
                 <h3 id="panel-title">Panoramica Generale</h3>
@@ -1499,6 +1847,10 @@
                 <a id="panel-gmaps-link" href="https://maps.app.goo.gl/Qe7YGNqUH9PDTjKD8" target="_blank"
                     class="btn-gmaps">
                     <span class="icon"><svg viewBox="0 0 24 24"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></span> Apri su Google Maps
+                </a>
+                <a id="panel-mymaps-link" href="https://www.google.com/maps/d/viewer?mid=195sYkebfw2Gy6YnY_fHVYr63Jk5jeug" target="_blank"
+                    class="btn-mymaps-panel">
+                    <span class="icon"><svg viewBox="0 0 24 24"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg></span> Google My Maps (Serracozzo)
                 </a>
             </div>
         </div>
@@ -1745,6 +2097,26 @@
                     </div>
                     <div class="sub-step" style="margin-top: 10px;">
                         <strong><span class="icon"><svg viewBox="0 0 24 24"><path d="M12 10V2"/><path d="m4.93 10.93 1.41 1.41"/><path d="M2 18h2"/><path d="M20 18h2"/><path d="m19.07 10.93-1.41 1.41"/><path d="M22 22H2"/><path d="m16 6-4 4-4-4"/><path d="M16 18a4 4 0 0 0-8 0"/></svg></span> Pomeriggio (Sartorius):</strong> Ripresa la macchina, scendete di pochi chilometri e fermatevi allo slargo per i <strong>Monti Sartorius</strong> (quota 1.660 m). È un percorso ad anello facile (circa 4 km) ma geologicamente bellissimo, che vi porta a camminare in cresta su sette crateri a "bottoniera" nati nel 1865.
+                    </div>
+                </div>
+
+                <!-- Box Google My Maps Ufficiale -->
+                <div class="card-mymaps-box">
+                    <div class="mymaps-badge-header">
+                        <span class="mymaps-pill"><span class="icon"><svg viewBox="0 0 24 24"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg></span> Google My Maps</span>
+                        <span class="mymaps-sync-tag">🟢 Pronta per navigazione iPhone</span>
+                    </div>
+                    <h4>Mappa Personalizzata &quot;Sentiero Serracozzo&quot;</h4>
+                    <p>Puoi consultare la traccia esatta, i waypoint e i punti panoramici direttamente su Google Maps dal tuo iPhone, oppure navigarla nella mappa interattiva del sito.</p>
+                    <div class="mymaps-actions">
+                        <a href="https://www.google.com/maps/d/viewer?mid=195sYkebfw2Gy6YnY_fHVYr63Jk5jeug" target="_blank" class="btn-mymaps-primary" onclick="event.stopPropagation()">
+                            <span class="icon"><svg viewBox="0 0 24 24"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></span>
+                            Apri Mappa su iPhone (Google Maps)
+                        </a>
+                        <button type="button" class="btn-mymaps-secondary" onclick="event.stopPropagation(); switchMapView('mymaps', true)">
+                            <span class="icon"><svg viewBox="0 0 24 24"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg></span>
+                            Naviga nella Mappa del Sito
+                        </button>
                     </div>
                 </div>
 
@@ -2111,6 +2483,17 @@ const coords = {
             document.getElementById('panel-trek').innerText = data.trek;
             document.getElementById('panel-gmaps-link').href = data.link;
 
+            // Gestione visibilità pulsante My Maps nel pannello
+            const mymapsPanelBtn = document.getElementById('panel-mymaps-link');
+            if (mymapsPanelBtn) {
+                mymapsPanelBtn.style.display = (routeKey === 'opt3' || routeKey === 'all') ? 'flex' : 'none';
+            }
+
+            // Se l'utente seleziona Nord o Sud mentre era su Google My Maps, torna alla vista Leaflet
+            if (routeKey === 'opt1' || routeKey === 'opt2') {
+                switchMapView('leaflet');
+            }
+
             // Gestione evidenziazione linee e zoom mappa
             if (routeKey === 'all') {
                 polyNord.setStyle({ opacity: 0.8, weight: 4 });
@@ -2146,6 +2529,46 @@ const coords = {
                     // fitBounds sulla traccia reale di Serracozzo per centrare il trekking
                     map.fitBounds(polyTrekSerracozzo.getBounds(), { padding: [50, 50] });
                     markerEst1.openPopup();
+                }
+            }
+        }
+
+        // Funzione Switch Modalità Mappa (Leaflet Offline GPS vs Google My Maps)
+        function switchMapView(mode, scrollToMap) {
+            const btnLeaflet = document.getElementById('btn-mode-leaflet');
+            const btnMymaps = document.getElementById('btn-mode-mymaps');
+            const mapView = document.getElementById('map');
+            const mymapsView = document.getElementById('mymaps-view');
+            const mymapsIframe = document.getElementById('mymaps-iframe');
+
+            if (mode === 'mymaps') {
+                if (btnLeaflet) btnLeaflet.classList.remove('active');
+                if (btnMymaps) btnMymaps.classList.add('active');
+                if (mapView) mapView.style.display = 'none';
+                if (mymapsView) mymapsView.style.display = 'flex';
+
+                // Lazy load dell'iframe alla prima apertura
+                if (mymapsIframe && (!mymapsIframe.src || mymapsIframe.src === '' || mymapsIframe.src === window.location.href)) {
+                    const targetSrc = mymapsIframe.getAttribute('data-src');
+                    if (targetSrc) mymapsIframe.src = targetSrc;
+                }
+            } else {
+                if (btnMymaps) btnMymaps.classList.remove('active');
+                if (btnLeaflet) btnLeaflet.classList.add('active');
+                if (mymapsView) mymapsView.style.display = 'none';
+                if (mapView) mapView.style.display = 'block';
+
+                if (typeof map !== 'undefined' && map) {
+                    setTimeout(function() {
+                        map.invalidateSize();
+                    }, 50);
+                }
+            }
+
+            if (scrollToMap) {
+                const mapSec = document.querySelector('.map-section');
+                if (mapSec) {
+                    mapSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
             }
         }
