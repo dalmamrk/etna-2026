@@ -1301,6 +1301,148 @@
                 padding: 16px 12px;
             }
         }
+
+        /* ==========================================================
+           GPS LIVE TRACKER - Pulsating Dot & Controls
+           ========================================================== */
+        .gps-control {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 0;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            font-size: 20px;
+            line-height: 1;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        .gps-control:hover {
+            box-shadow: var(--shadow-lg);
+            transform: scale(1.05);
+        }
+
+        .gps-control.active {
+            background: #059669;
+            border-color: #059669;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.25), var(--shadow);
+        }
+
+        .gps-control .gps-icon {
+            width: 22px;
+            height: 22px;
+            fill: none;
+            stroke: #94a3b8;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transition: stroke 0.3s ease;
+        }
+
+        .gps-control.active .gps-icon {
+            stroke: #fff;
+        }
+
+        .gps-toast {
+            position: absolute;
+            top: 60px;
+            right: 10px;
+            z-index: 1000;
+            background: rgba(30, 41, 59, 0.92);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            color: #fff;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-size: 0.82em;
+            font-weight: 500;
+            max-width: 260px;
+            box-shadow: var(--shadow-lg);
+            opacity: 0;
+            transform: translateY(-8px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none;
+        }
+
+        .gps-toast.visible {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        /* Pulsating blue dot (Google Maps style) */
+        @keyframes gps-pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            70% {
+                transform: scale(2.5);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(2.5);
+                opacity: 0;
+            }
+        }
+
+        .gps-dot-outer {
+            width: 18px;
+            height: 18px;
+            position: relative;
+        }
+
+        .gps-dot-outer::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: rgba(59, 130, 246, 0.3);
+            animation: gps-pulse 2s ease-out infinite;
+        }
+
+        .gps-dot-inner {
+            width: 18px;
+            height: 18px;
+            background: #3b82f6;
+            border: 3px solid #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 6px rgba(59, 130, 246, 0.5), 0 2px 6px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .gps-elevation-badge {
+            position: absolute;
+            bottom: 62px;
+            right: 10px;
+            z-index: 1000;
+            background: rgba(30, 41, 59, 0.88);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.78em;
+            font-weight: 600;
+            box-shadow: var(--shadow);
+            display: none;
+        }
+
+        .gps-elevation-badge.visible {
+            display: block;
+        }
     </style>
 </head>
 
@@ -1839,11 +1981,9 @@ const coords = {
             [37.7160, 14.9980], [37.7210, 15.0000], [37.7240, 14.9980]
         ];
 
-        const trekSerracozzo = [
-            coords.parkEst1,
-            [37.7660, 15.0560], [37.7675, 15.0510], [37.7690, 15.0450],
-            [37.7710, 15.0380], [37.7730, 15.0320], [37.7745, 15.0280]
-        ];
+        // ── Traccia GPX REALE: Sentiero Serracozzo (348 punti ad alta precisione) ──
+        const trekSerracozzoFull = [[37.76505,15.058996,1738.3],[37.76504,15.058911,1739.0],[37.764876,15.058016,1740.0],[37.764875,15.057905,1740.5],[37.764896,15.05782,1741.3],[37.764934,15.057753,1742.0],[37.76484,15.05769,1741.8],[37.764828,15.057661,1741.8],[37.764826,15.057579,1742.3],[37.764864,15.057295,1745.5],[37.76486,15.057102,1747.5],[37.764656,15.056845,1751.0],[37.764617,15.05668,1753.5],[37.76463,15.056533,1755.3],[37.7647,15.056357,1757.0],[37.764718,15.056204,1758.8],[37.76467,15.05605,1760.8],[37.76473,15.0558,1763.8],[37.76471,15.055664,1766.3],[37.764562,15.055476,1770.5],[37.764563,15.05525,1774.5],[37.764485,15.055011,1779.5],[37.764416,15.054899,1782.3],[37.76426,15.0547,1787.8],[37.764315,15.054361,1793.5],[37.76426,15.05419,1797.3],[37.76428,15.05402,1800.3],[37.76419,15.053839,1804.5],[37.764169,15.053709,1807.0],[37.764117,15.053578,1809.0],[37.76409,15.05327,1814.8],[37.764044,15.053166,1816.5],[37.763946,15.052875,1822.0],[37.763682,15.052381,1831.0],[37.76355,15.05228,1832.8],[37.763494,15.052153,1835.8],[37.763459,15.052009,1839.5],[37.76341,15.051937,1841.3],[37.76334,15.051881,1842.8],[37.763273,15.051775,1845.8],[37.763198,15.051634,1850.0],[37.76316,15.051546,1852.3],[37.763121,15.051515,1853.0],[37.76298,15.05149,1854.0],[37.762828,15.051395,1856.8],[37.762703,15.051436,1855.8],[37.762606,15.051448,1855.8],[37.762356,15.051543,1855.5],[37.762242,15.051527,1857.5],[37.762081,15.051472,1861.5],[37.761967,15.051384,1865.5],[37.761926,15.051462,1864.0],[37.761846,15.051569,1862.0],[37.761684,15.051582,1864.0],[37.761632,15.051547,1866.0],[37.761472,15.051665,1865.8],[37.761252,15.051574,1872.8],[37.761153,15.051736,1869.8],[37.761067,15.051849,1868.3],[37.760894,15.051893,1870.0],[37.760794,15.051886,1871.8],[37.760695,15.051916,1871.8],[37.760625,15.051964,1871.3],[37.760453,15.05198,1872.5],[37.760373,15.052054,1871.3],[37.76033,15.052051,1871.8],[37.760253,15.052167,1869.3],[37.760167,15.052242,1868.3],[37.76012,15.052311,1866.8],[37.760013,15.052356,1866.8],[37.759891,15.05235,1869.0],[37.759791,15.052387,1870.0],[37.759738,15.052435,1869.5],[37.759683,15.052432,1870.8],[37.759651,15.052474,1870.3],[37.759608,15.052473,1871.0],[37.75958,15.05258,1868.5],[37.75936,15.052774,1867.3],[37.75931,15.052938,1863.3],[37.759268,15.052923,1864.8],[37.759235,15.053026,1862.3],[37.759172,15.053061,1862.5],[37.75898,15.053307,1858.5],[37.758985,15.053389,1856.3],[37.75892,15.05346,1855.3],[37.758869,15.053559,1853.3],[37.758769,15.053623,1852.8],[37.758693,15.053786,1849.0],[37.758579,15.053887,1847.0],[37.758427,15.053883,1848.5],[37.7583,15.053897,1849.0],[37.75813,15.053849,1850.3],[37.758047,15.053859,1849.8],[37.757978,15.053941,1847.0],[37.757984,15.054008,1845.0],[37.757822,15.054094,1842.0],[37.757732,15.054019,1844.3],[37.757574,15.05405,1843.3],[37.757366,15.053891,1848.3],[37.757252,15.053701,1854.0],[37.757159,15.053807,1851.0],[37.757044,15.053901,1848.8],[37.7569,15.05391,1848.8],[37.756795,15.053959,1847.5],[37.756628,15.053939,1849.8],[37.756562,15.053943,1851.5],[37.756433,15.053956,1855.3],[37.756395,15.053917,1857.5],[37.756362,15.053958,1857.5],[37.756386,15.053997,1855.8],[37.756326,15.05406,1856.0],[37.7563,15.05412,1855.5],[37.756244,15.054174,1856.0],[37.756234,15.054276,1855.8],[37.756182,15.054311,1857.3],[37.756163,15.054444,1856.8],[37.756116,15.054494,1858.0],[37.756086,15.054579,1858.5],[37.75604,15.054631,1859.5],[37.755866,15.054606,1865.3],[37.755745,15.05449,1869.5],[37.75567,15.05445,1871.8],[37.75563,15.05438,1874.0],[37.755525,15.054282,1878.5],[37.755532,15.054184,1880.0],[37.75546,15.054167,1882.8],[37.755367,15.054048,1889.3],[37.755376,15.05399,1890.5],[37.75531,15.053933,1894.8],[37.755142,15.053912,1901.8],[37.7551,15.05382,1906.3],[37.755094,15.053669,1911.0],[37.755051,15.053589,1915.5],[37.755,15.053542,1919.3],[37.75494,15.053541,1919.0],[37.754917,15.053519,1919.8],[37.754949,15.053383,1924.3],[37.754901,15.053301,1926.8],[37.754836,15.053233,1928.5],[37.754835,15.053152,1930.8],[37.754915,15.053131,1931.3],[37.754996,15.053136,1930.8],[37.754956,15.053069,1932.8],[37.754853,15.053066,1933.0],[37.754834,15.052992,1935.3],[37.75477,15.05294,1937.0],[37.754779,15.052806,1940.8],[37.754765,15.052684,1944.5],[37.754724,15.052591,1947.5],[37.75477,15.052564,1947.8],[37.754797,15.052458,1950.5],[37.754725,15.052422,1952.3],[37.754674,15.05234,1955.3],[37.754704,15.052182,1959.0],[37.754681,15.052114,1961.3],[37.754689,15.051948,1965.5],[37.754612,15.05185,1969.5],[37.754625,15.051758,1971.8],[37.754604,15.051617,1975.8],[37.754751,15.051548,1974.8],[37.754806,15.051487,1975.3],[37.754788,15.051406,1977.3],[37.754607,15.051299,1982.8],[37.75453,15.051336,1983.3],[37.754442,15.05136,1984.5],[37.754404,15.051425,1983.5],[37.754366,15.051302,1987.0],[37.754269,15.051288,1989.3],[37.754171,15.051197,1993.0],[37.754072,15.05118,1994.5],[37.753942,15.051044,1999.3],[37.75383,15.050819,2006.3],[37.753827,15.050715,2009.3],[37.753771,15.050672,2011.0],[37.753768,15.050599,2013.0],[37.753723,15.050586,2013.8],[37.753701,15.050443,2017.8],[37.753611,15.050325,2021.5],[37.75359,15.05024,2023.8],[37.753511,15.050131,2027.0],[37.7535,15.049921,2031.3],[37.753429,15.0498,2032.3],[37.753354,15.049728,2032.5],[37.753306,15.049631,2032.3],[37.753148,15.049472,2027.8],[37.753121,15.049363,2026.3],[37.753136,15.049274,2026.8],[37.75311,15.049151,2024.5],[37.753223,15.049177,2030.5],[37.753294,15.049238,2032.8],[37.753387,15.04932,2036.0],[37.753433,15.049215,2037.8],[37.753495,15.049271,2038.5],[37.753632,15.04922,2042.3],[37.75374,15.04923,2044.5],[37.753806,15.049153,2047.0],[37.753833,15.049067,2046.3],[37.754026,15.048906,2050.3],[37.754136,15.048842,2053.5],[37.754246,15.048742,2053.3],[37.754338,15.048575,2052.3],[37.754379,15.048441,2052.5],[37.754447,15.048319,2052.8],[37.754517,15.048177,2053.0],[37.754589,15.048174,2053.3],[37.754655,15.04803,2054.3],[37.754674,15.047749,2055.8],[37.754839,15.04747,2061.8],[37.754873,15.046794,2078.5],[37.754865,15.046461,2084.8],[37.754814,15.046193,2087.3],[37.754771,15.045785,2092.5],[37.754737,15.045378,2096.5],[37.754805,15.044702,2108.0],[37.754831,15.044047,2120.3],[37.754854,15.043733,2128.3],[37.754892,15.043384,2138.3],[37.755043,15.043274,2144.3],[37.755042,15.04313,2142.3],[37.755204,15.042947,2143.0],[37.755285,15.042823,2143.8],[37.755378,15.042727,2145.8],[37.755497,15.042555,2149.0],[37.755617,15.042473,2153.3],[37.755751,15.042571,2157.3],[37.755807,15.042566,2159.3],[37.755886,15.042384,2161.0],[37.755972,15.042289,2161.3],[37.756091,15.042208,2161.8],[37.756192,15.04215,2162.3],[37.756315,15.042108,2162.8],[37.756538,15.042087,2163.3],[37.756655,15.042089,2163.3],[37.756537,15.041876,2167.5],[37.756416,15.041324,2175.3],[37.756313,15.041079,2175.3],[37.756536,15.040684,2189.0],[37.756606,15.04044,2194.8],[37.756754,15.040225,2201.5],[37.757028,15.039968,2211.0],[37.75718,15.039737,2218.5],[37.757315,15.039502,2225.3],[37.757397,15.039179,2232.3],[37.757439,15.038892,2241.0],[37.757439,15.038622,2248.8],[37.757567,15.038353,2260.5],[37.757757,15.038002,2263.8],[37.758148,15.037661,2281.5],[37.758535,15.03769,2292.8],[37.758965,15.037538,2303.3],[37.759,15.037991,2290.3],[37.759051,15.038272,2282.0],[37.759065,15.038416,2277.0],[37.759086,15.038634,2269.8],[37.75914,15.038931,2259.3],[37.75947,15.039498,2235.3],[37.759903,15.039763,2222.0],[37.760077,15.039964,2213.0],[37.760236,15.040225,2201.5],[37.760376,15.040507,2190.5],[37.760446,15.040756,2182.5],[37.760446,15.040937,2178.0],[37.760287,15.041214,2174.0],[37.760347,15.041371,2169.5],[37.760319,15.041511,2166.3],[37.760363,15.04164,2163.0],[37.760335,15.041785,2159.0],[37.760363,15.041969,2153.3],[37.760338,15.042295,2144.0],[37.760468,15.042403,2140.0],[37.760729,15.042576,2133.5],[37.760725,15.042753,2128.8],[37.760576,15.042958,2124.0],[37.760582,15.043336,2113.8],[37.760671,15.043488,2108.5],[37.760633,15.04373,2101.0],[37.760814,15.04422,2086.0],[37.760964,15.044304,2080.5],[37.761116,15.044698,2064.8],[37.761135,15.045128,2051.8],[37.761116,15.045345,2047.5],[37.761037,15.04553,2045.8],[37.761326,15.045956,2026.3],[37.761481,15.045875,2023.8],[37.76158,15.046133,2013.8],[37.761736,15.046265,2006.3],[37.761745,15.046402,2002.8],[37.761958,15.046603,1993.0],[37.762002,15.046691,1990.0],[37.762098,15.046707,1987.5],[37.762301,15.047009,1975.5],[37.76252,15.047366,1962.8],[37.762651,15.047704,1952.0],[37.76273,15.047849,1947.0],[37.762924,15.048025,1939.3],[37.762981,15.048435,1928.5],[37.763032,15.048592,1924.0],[37.763064,15.048918,1916.3],[37.763264,15.048998,1912.8],[37.763467,15.049263,1904.0],[37.763597,15.049617,1892.8],[37.763591,15.050075,1881.8],[37.763569,15.050264,1878.5],[37.763467,15.050662,1872.0],[37.763314,15.050971,1866.5],[37.763121,15.051515,1853.0],[37.76316,15.051546,1852.3],[37.763198,15.051634,1850.0],[37.763273,15.051775,1845.8],[37.76334,15.051881,1842.8],[37.76341,15.051937,1841.3],[37.763459,15.052009,1839.5],[37.763494,15.052153,1835.8],[37.76355,15.05228,1832.8],[37.763682,15.052381,1831.0],[37.763946,15.052875,1822.0],[37.764044,15.053166,1816.5],[37.76409,15.05327,1814.8],[37.764117,15.053578,1809.0],[37.764169,15.053709,1807.0],[37.76419,15.053839,1804.5],[37.76428,15.05402,1800.3],[37.76426,15.05419,1797.3],[37.764315,15.054361,1793.5],[37.76426,15.0547,1787.8],[37.764416,15.054899,1782.3],[37.764485,15.055011,1779.5],[37.764563,15.05525,1774.5],[37.764562,15.055476,1770.5],[37.76471,15.055664,1766.3],[37.76473,15.0558,1763.8],[37.76467,15.05605,1760.8],[37.764718,15.056204,1758.8],[37.7647,15.056357,1757.0],[37.76463,15.056533,1755.3],[37.764617,15.05668,1753.5],[37.764656,15.056845,1751.0],[37.76486,15.057102,1747.5],[37.764864,15.057295,1745.5],[37.764826,15.057579,1742.3],[37.764828,15.057661,1741.8],[37.76484,15.05769,1741.8],[37.764934,15.057753,1742.0],[37.764896,15.05782,1741.3],[37.764875,15.057905,1740.5],[37.764876,15.058016,1740.0],[37.76504,15.058911,1739.0],[37.765054,15.059022,1734.8]];
+        const trekSerracozzo = trekSerracozzoFull.map(p => [p[0], p[1]]);
 
         const trekSartorius = [
             coords.parkEst2,
@@ -1906,8 +2046,8 @@ const coords = {
         const polyTrekSud = L.polyline(trekSud, { color: '#d97706', dashArray: '6, 8', weight: 3 }).addTo(map)
             .bindTooltip('Trekking Sud: Salita Cratere 2001 & Quota 2.500m', { sticky: true });
 
-        const polyTrekSerracozzo = L.polyline(trekSerracozzo, { color: '#059669', dashArray: '6, 8', weight: 3.5 }).addTo(map)
-            .bindTooltip('Mattina: Sentiero Serracozzo (Grotta e Valle del Bove)', { sticky: true });
+        const polyTrekSerracozzo = L.polyline(trekSerracozzo, { color: '#059669', weight: 4, opacity: 0.9 }).addTo(map)
+            .bindTooltip('Mattina: Sentiero Serracozzo (Grotta e Valle del Bove) — Traccia GPS reale', { sticky: true });
 
         const polyTrekSartorius = L.polyline(trekSartorius, { color: '#059669', dashArray: '6, 8', weight: 3.5 }).addTo(map)
             .bindTooltip('Pomeriggio: Anello Monti Sartorius (Crateri a bottoniera)', { sticky: true });
@@ -2003,7 +2143,8 @@ const coords = {
                 } else if (routeKey === 'opt3') {
                     polyEst.setStyle({ opacity: 1, weight: 6 });
                     polyTrekEst.setStyle({ opacity: 1 });
-                    map.fitBounds(polyEst.getBounds(), { padding: [40, 40] });
+                    // fitBounds sulla traccia reale di Serracozzo per centrare il trekking
+                    map.fitBounds(polyTrekSerracozzo.getBounds(), { padding: [50, 50] });
                     markerEst1.openPopup();
                 }
             }
@@ -2142,6 +2283,186 @@ const coords = {
                 navigateModal(1);
             }
         });
+
+        // ==========================================================
+        // GPS LIVE TRACKER — Ottimizzato per iPhone / Safari iOS
+        // ==========================================================
+        (function() {
+            'use strict';
+
+            // Stato GPS
+            let gpsActive = false;
+            let watchId = null;
+            let userMarker = null;
+            let accuracyCircle = null;
+            let toastTimeout = null;
+
+            // Crea il pulsante di controllo GPS nel container della mappa
+            const mapContainer = document.getElementById('map');
+
+            const gpsBtn = document.createElement('button');
+            gpsBtn.className = 'gps-control';
+            gpsBtn.id = 'gps-toggle';
+            gpsBtn.title = 'Segui la mia posizione';
+            gpsBtn.setAttribute('aria-label', 'Attiva localizzazione GPS');
+            gpsBtn.innerHTML = '<svg class="gps-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="8" fill="none"/></svg>';
+            mapContainer.style.position = 'relative';
+            mapContainer.appendChild(gpsBtn);
+
+            // Toast notifiche
+            const toast = document.createElement('div');
+            toast.className = 'gps-toast';
+            toast.id = 'gps-toast';
+            mapContainer.appendChild(toast);
+
+            // Badge altitudine
+            const elevBadge = document.createElement('div');
+            elevBadge.className = 'gps-elevation-badge';
+            elevBadge.id = 'gps-elevation';
+            mapContainer.appendChild(elevBadge);
+
+            function showToast(msg, duration) {
+                duration = duration || 3500;
+                toast.textContent = msg;
+                toast.classList.add('visible');
+                if (toastTimeout) clearTimeout(toastTimeout);
+                toastTimeout = setTimeout(function() {
+                    toast.classList.remove('visible');
+                }, duration);
+            }
+
+            // Icona marker pulsante (divIcon)
+            const gpsDotIcon = L.divIcon({
+                html: '<div class="gps-dot-outer"><div class="gps-dot-inner"></div></div>',
+                className: '',
+                iconSize: [18, 18],
+                iconAnchor: [9, 9]
+            });
+
+            function onPositionUpdate(position) {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                const acc = position.coords.accuracy;
+                const alt = position.coords.altitude;
+                const latlng = L.latLng(lat, lng);
+
+                // Aggiorna / crea marker
+                if (!userMarker) {
+                    userMarker = L.marker(latlng, {
+                        icon: gpsDotIcon,
+                        zIndexOffset: 1000,
+                        interactive: false
+                    }).addTo(map);
+
+                    accuracyCircle = L.circle(latlng, {
+                        radius: acc,
+                        color: '#3b82f6',
+                        fillColor: '#3b82f6',
+                        fillOpacity: 0.10,
+                        weight: 1.5,
+                        opacity: 0.35,
+                        interactive: false
+                    }).addTo(map);
+                } else {
+                    userMarker.setLatLng(latlng);
+                    accuracyCircle.setLatLng(latlng);
+                    accuracyCircle.setRadius(acc);
+                }
+
+                // Badge altitudine se disponibile
+                if (alt !== null) {
+                    elevBadge.textContent = '⛰ ' + Math.round(alt) + ' m s.l.m.';
+                    elevBadge.classList.add('visible');
+                }
+
+                // Centra mappa
+                if (gpsActive) {
+                    map.panTo(latlng);
+                    // Zoom automatico al primo fix se troppo distante
+                    if (map.getZoom() < 14) {
+                        map.setView(latlng, 15);
+                    }
+                }
+            }
+
+            function onPositionError(error) {
+                var msg = '';
+                switch(error.code) {
+                    case error.PERMISSION_DENIED:
+                        msg = '⚠️ Permesso di localizzazione negato. Vai in Impostazioni → Safari → Posizione e abilita l\'accesso.';
+                        stopGPS();
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        msg = '📡 Segnale GPS non disponibile. Assicurati di essere all\'aperto.';
+                        break;
+                    case error.TIMEOUT:
+                        msg = '⏱ Timeout GPS. Attendo un segnale migliore...';
+                        break;
+                    default:
+                        msg = '❌ Errore GPS sconosciuto.';
+                        stopGPS();
+                }
+                showToast(msg, 5000);
+            }
+
+            function startGPS() {
+                if (!navigator.geolocation) {
+                    showToast('❌ Geolocalizzazione non supportata dal browser.', 5000);
+                    return;
+                }
+
+                gpsActive = true;
+                gpsBtn.classList.add('active');
+                gpsBtn.setAttribute('aria-label', 'Disattiva localizzazione GPS');
+                showToast('📍 Localizzazione attiva — Seguo la tua posizione', 2500);
+
+                watchId = navigator.geolocation.watchPosition(
+                    onPositionUpdate,
+                    onPositionError,
+                    {
+                        enableHighAccuracy: true,
+                        maximumAge: 2000,
+                        timeout: 10000
+                    }
+                );
+            }
+
+            function stopGPS() {
+                gpsActive = false;
+                gpsBtn.classList.remove('active');
+                gpsBtn.setAttribute('aria-label', 'Attiva localizzazione GPS');
+
+                if (watchId !== null) {
+                    navigator.geolocation.clearWatch(watchId);
+                    watchId = null;
+                }
+
+                // Rimuovi marker e cerchio
+                if (userMarker) {
+                    map.removeLayer(userMarker);
+                    userMarker = null;
+                }
+                if (accuracyCircle) {
+                    map.removeLayer(accuracyCircle);
+                    accuracyCircle = null;
+                }
+
+                elevBadge.classList.remove('visible');
+                showToast('📍 Localizzazione disattivata', 2000);
+            }
+
+            // Toggle handler
+            gpsBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (gpsActive) {
+                    stopGPS();
+                } else {
+                    startGPS();
+                }
+            });
+
+        })();
     </script>
 
     <!-- Modal Ingrandimento Immagini Gallery -->
