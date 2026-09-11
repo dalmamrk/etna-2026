@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guida Sentiero Serracozzo e Serra delle Concazze | Etna 2026</title>
+    <meta name="description" content="Guida completa e relazione tecnica del sentiero ad anello per la Grotta di Serracozzo e Serra delle Concazze dal Rifugio Citelli sull'Etna.">
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg: #0b0f19;
+            --surface: #131b2e;
+            --surface-alt: #1e293b;
+            --border: #334155;
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --primary: #38bdf8;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --radius: 12px;
+            --max-w: 840px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            font-size: 16px;
+            padding: 0 16px 60px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: var(--max-w);
+            margin: 0 auto;
+        }
+
+        /* Navigazione superiore */
+        .top-nav {
+            padding: 24px 0 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 32px;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9em;
+            padding: 8px 14px;
+            border-radius: 8px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .btn-back:hover {
+            background: var(--surface-alt);
+            color: #ffffff;
+            transform: translateX(-2px);
+        }
+
+        .source-tag {
+            font-size: 0.8em;
+            color: var(--text-muted);
+        }
+
+        .source-tag a {
+            color: var(--text-muted);
+            text-decoration: underline;
+        }
+
+        /* Header articolo */
+        .article-header {
+            margin-bottom: 36px;
+        }
+
+        .badge-category {
+            display: inline-block;
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            font-size: 0.75em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-size: 2.1em;
+            font-weight: 800;
+            line-height: 1.25;
+            color: #ffffff;
+            margin-bottom: 14px;
+            letter-spacing: -0.02em;
+        }
+
+        .article-intro {
+            font-size: 1.1em;
+            color: #cbd5e1;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        /* Tabella Scheda Tecnica */
+        .spec-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .spec-card h2 {
+            font-size: 1.2em;
+            color: #ffffff;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 12px;
+        }
+
+        .spec-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+        }
+
+        .spec-item {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 12px 14px;
+            border-radius: 8px;
+        }
+
+        .spec-label {
+            display: block;
+            font-size: 0.75em;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .spec-val {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .spec-val.highlight {
+            color: #34d399;
+        }
+
+        /* Sezioni di testo */
+        .content-section {
+            margin-bottom: 38px;
+        }
+
+        h2.section-title {
+            font-size: 1.45em;
+            color: #ffffff;
+            margin: 32px 0 16px 0;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--surface-alt);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h3.sub-title {
+            font-size: 1.18em;
+            color: #38bdf8;
+            margin: 24px 0 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        p {
+            margin-bottom: 16px;
+            color: #cbd5e1;
+        }
+
+        /* Step Timeline Ordinata */
+        .timeline {
+            position: relative;
+            margin: 24px 0 32px 12px;
+            border-left: 2px solid var(--border);
+            padding-left: 24px;
+        }
+
+        .step-item {
+            position: relative;
+            margin-bottom: 28px;
+        }
+
+        .step-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-marker {
+            position: absolute;
+            left: -33px;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #059669;
+            border: 3px solid var(--bg);
+            color: #fff;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .step-title {
+            font-weight: 700;
+            color: #ffffff;
+            font-size: 1.05em;
+            margin-bottom: 6px;
+        }
+
+        /* Box in evidenza */
+        .highlight-box {
+            background: rgba(56, 189, 248, 0.08);
+            border-left: 4px solid var(--primary);
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 24px 0;
+            font-size: 0.95em;
+        }
+
+        .highlight-box strong {
+            color: #ffffff;
+        }
+
+        .warning-box {
+            background: rgba(245, 158, 11, 0.08);
+            border-left: 4px solid var(--accent-orange);
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 24px 0;
+            font-size: 0.95em;
+        }
+
+        .warning-box strong {
+            color: #fde047;
+        }
+
+        /* Liste puntate ordinate */
+        ul.clean-list {
+            list-style: none;
+            margin: 16px 0 24px 0;
+        }
+
+        ul.clean-list li {
+            position: relative;
+            padding-left: 24px;
+            margin-bottom: 10px;
+            color: #cbd5e1;
+        }
+
+        ul.clean-list li::before {
+            content: "•";
+            position: absolute;
+            left: 8px;
+            color: var(--primary);
+            font-size: 1.2em;
+            line-height: 1;
+        }
+
+        /* Azioni finali */
+        .bottom-actions {
+            margin-top: 48px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.9em;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-primary:hover {
+            filter: brightness(1.08);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--surface-alt);
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+
+        .icon-inline {
+            width: 1.1em;
+            height: 1.1em;
+            vertical-align: -0.15em;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.65em; }
+            .spec-grid { grid-template-columns: 1fr 1fr; }
+            .top-nav { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .bottom-actions { flex-direction: column; }
+            .btn-action { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <!-- Barra superiore con link indietro -->
+        <nav class="top-nav">
+            <a href="index.html" class="btn-back">
+                <svg class="icon-inline" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+                Torna a tutti gli Itinerari
+            </a>
+            <span class="source-tag">Fonte: <a href="https://italiaincammino.com/sentiero-trekking-sentiero-per-serra-delle-concazze-e-grotta-di-serracozzo/" target="_blank" rel="noopener">Italia in Cammino</a></span>
+        </nav>
+
+        <!-- Intestazione Principale -->
+        <header class="article-header">
+            <span class="badge-category">Guida Tecnica &bull; Versante Est Etna</span>
+            <h1>Sentiero per Serra delle Concazze e Grotta di Serracozzo dal Rifugio Citelli</h1>
+            <p class="article-intro">
+                Un itinerario ad anello di straordinario valore naturalistico e geologico che unisce boschi secolari di betulle endemiche, la visita speleologica a un tubo di lava e l'affaccio panoramico a strapiombo sull'immenso anfiteatro della Valle del Bove.
+            </p>
+        </header>
+
+        <!-- Scheda Tecnica Riassuntiva -->
+        <section class="spec-card">
+            <h2>
+                <svg class="icon-inline" viewBox="0 0 24 24"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
+                Dati Tecnici del Percorso in Sintesi
+            </h2>
+            <div class="spec-grid">
+                <div class="spec-item">
+                    <span class="spec-label">Tipologia Percorso</span>
+                    <span class="spec-val">Giro ad Anello</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Lunghezza Totale</span>
+                    <span class="spec-val">6,5 km</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Dislivello Salita (+)</span>
+                    <span class="spec-val highlight">+550 m</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Dislivello Discesa (−)</span>
+                    <span class="spec-val">-550 m</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Quota di Partenza</span>
+                    <span class="spec-val">1.750 m (Citelli)</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Quota Massima</span>
+                    <span class="spec-val highlight">2.261 m (Concazze)</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Tempo di Percorrenza</span>
+                    <span class="spec-val">3h 30min (circa)</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Difficoltà</span>
+                    <span class="spec-val">Media (E - Escursionisti)</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Segnaletica</span>
+                    <span class="spec-val">CAI 723 + Concazze</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Punto Partenza / Arrivo</span>
+                    <span class="spec-val">Rifugio Citelli (Sant'Alfio)</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Acqua sul Percorso</span>
+                    <span class="spec-val" style="color: #f87171;">Assente</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Costo Ingresso</span>
+                    <span class="spec-val">Gratuito / Libero</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sviluppo del Percorso Tappa per Tappa -->
+        <section class="content-section">
+            <h2 class="section-title">
+                <svg class="icon-inline" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Descrizione Dettagliata dell'Itinerario
+            </h2>
+
+            <div class="timeline">
+                
+                <div class="step-item">
+                    <div class="step-marker">1</div>
+                    <div class="step-title">Partenza dal Rifugio Citelli e attacco del sentiero (1.750 m)</div>
+                    <p>
+                        Lasciata l'auto nel parcheggio gratuito adiacente al Rifugio Citelli, si percorrono pochi metri a ritroso lungo la strada asfaltata d'accesso. Sulla sinistra, in prossimità del guardrail, si individua il segnale rosso su roccia che indica l'attacco ufficiale del <strong>sentiero CAI 723</strong>.
+                    </p>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-marker">2</div>
+                    <div class="step-title">Attraversamento del Bosco di Betulle dell'Etna</div>
+                    <p>
+                        Il sentiero sale inizialmente con pendenza graduale immergendosi nella faggeta e nel celebre bosco di <em>Betula aetnensis</em>, specie endemica dell'Etna caratterizzata da tronchi candidi e corteccia cartacea, che creano un contrasto cromatico unico con la sabbia vulcanica nera.
+                    </p>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-marker">3</div>
+                    <div class="step-title">Risalita del canalone lavico e arrivo alla Grotta di Serracozzo (~1.850 m)</div>
+                    <p>
+                        Superato il bosco, la vegetazione si dirada lasciando spazio a cuscinetti spinosi di Spino Santo (<em>Astragalus siculus</em>). Si rimonta un canalone di sabbie laviche fino a raggiungere l'ingresso superiore della <strong>Grotta di Serracozzo</strong>, spettacolare galleria di scorrimento lavico formatasi durante l'eruzione del 1971.
+                    </p>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-marker">4</div>
+                    <div class="step-title">Visita alla Grotta di Serracozzo</div>
+                    <p>
+                        L'apertura ricorda un caratteristico "buco di serratura". All'interno, un lucernario naturale fa filtrare dall'alto un suggestivo fascio di luce perpendicolare che illumina la volta basaltica. La galleria principale si sviluppa per circa 350 metri in discesa, con pareti che presentano striature lucide quasi vetrificate.
+                    </p>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-marker">5</div>
+                    <div class="step-title">Salita verso l'orlo della Valle del Bove e Serra delle Concazze (2.261 m)</div>
+                    <p>
+                        Dalla grotta si prosegue la decisa salita su scorie e sabbia mobile superando gli ultimi 400 metri di dislivello positivo. Raggiunto il crinale di <strong>Serra delle Concazze</strong> a quota 2.261 m, il panorama si apre improvvisamente con un affaccio vertiginoso sull'abisso della <strong>Valle del Bove</strong>, delimitata da pareti alte fino a 1.000 metri con vista verso il Cratere di Sud-Est e la costa ionica.
+                    </p>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-marker">6</div>
+                    <div class="step-title">Chiusura dell'Anello lungo il crinale e la Colata del 1928</div>
+                    <p>
+                        Dalla cresta si abbandona la traccia CAI 723 e si imbocca sulla destra il sentiero di discesa che segue il bordo di Serra delle Concazze. Scendendo lungo i pendii lavici, si costeggiano le storiche colate eruttive del <strong>novembre 1928</strong> (le stesse che distrussero il paese di Mascali), rientrando infine al punto di partenza presso il Rifugio Citelli.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Punti di Interesse -->
+        <section class="content-section">
+            <h2 class="section-title">
+                <svg class="icon-inline" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                I Punti di Interesse Approfonditi
+            </h2>
+
+            <h3 class="sub-title">1. Il Rifugio Salvatore Citelli (1.750 m)</h3>
+            <p>
+                Costruito nel 1935 su iniziativa del Dottor Salvatore Citelli (pioniere del turismo alpino etneo) e ristrutturato nel 2012, sorge sull'orlo di un antico cratere spento (Monte Citelli). Rappresenta la terrazza panoramica più alta del versante nord-orientale ed è censito come Punto Base N. 15 del Parco dell'Etna. Offre bar, ristorante e camere.
+            </p>
+
+            <h3 class="sub-title">2. La Grotta di Serracozzo (Tubo di Lava del 1971)</h3>
+            <p>
+                Nata nel corso dell'eruzione primaverile del 1971, è uno dei tubi di lava più affascinanti e fotografati del vulcano. Si è formata per il raffreddamento superficiale del flusso lavico mentre la corrente magmatica interna continuava a defluire, lasciando una cavità vuota. È lunga circa 350 metri ed è profonda fino a 100 metri. L'esplorazione dei primi metri è accessibile, ma per addentrarsi oltre la zona illuminata dal lucernario sono obbligatori torcia frontale e casco protettivo.
+            </p>
+
+            <h3 class="sub-title">3. La Valle del Bove e la Cresta di Serra delle Concazze</h3>
+            <p>
+                Una gigantesca caldera a forma di ferro di cavallo aperta verso oriente, estesa per 7 km in lunghezza e 6 km in larghezza. È nata dal collasso e dallo sprofondamento di antichi centri eruttivi primordiali (il "Trifoglietto"). La Serra delle Concazze ne costituisce il baluardo settentrionale: una cresta rocciosa a picco punteggiata da dicchi magmatici verticali, torrioni basaltici (Rocca della Valle, Monte Scorsone, Rocca Capra) e campi di lava sovrapposti.
+            </p>
+
+            <h3 class="sub-title">4. Il Campo Lavico del 1928 (Eruzione di Mascali)</h3>
+            <p>
+                Nel novembre 1928 una fessura eruttiva apertasi a bassa quota sul versante nord-est emise una colata fluida che travolse e cancellò completamente il centro abitato di Mascali, interrompendo ferrovia e strade. Il sentiero attraversa i settori sommitali di questo imponente campo lavico scoriaceo.
+            </p>
+        </section>
+
+        <!-- Consigli e Attrezzatura -->
+        <section class="content-section">
+            <h2 class="section-title">
+                <svg class="icon-inline" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                Consigli Pratici, Sicurezza ed Equipaggiamento
+            </h2>
+
+            <div class="warning-box">
+                <strong>Attenzione all'acqua:</strong> Sul sentiero non esiste alcuna sorgente o punto di rifornimento d'acqua potabile. È tassativo partire con almeno 1,5 - 2 litri d'acqua a persona.
+            </div>
+
+            <ul class="clean-list">
+                <li><strong>Calzature da Trekking:</strong> Scarponi alti alla caviglia con suola scolpita (Vibram o similare). La risalita e la discesa avvengono su sabbie laviche profonde e pietrisco tagliente.</li>
+                <li><strong>Bastoncini Telescopici:</strong> Fortemente raccomandati per agevolare la salita nel canalone di sabbia e garantire equilibrio lungo la cresta di Serra delle Concazze.</li>
+                <li><strong>Illuminazione per la Grotta:</strong> Torcia elettrica o lampada frontale indispensabile se si desidera esplorare l'interno della galleria di Serracozzo. Caschetto consigliato per le pareti basse.</li>
+                <li><strong>Abbigliamento a Strati:</strong> A quota 2.260 m il vento può essere intenso e le temperature notevolmente più basse rispetto a Catania. Portare giacca a vento / softshell antivento, occhiali da sole e cappellino.</li>
+                <li><strong>Periodo Ottimale:</strong> Primavera e inizio autunno (il mese di settembre offre condizioni ideali con meteo stabile, temperature fresche e ottima visibilità sulla costa ionica).</li>
+            </ul>
+        </section>
+
+        <!-- Azioni di Navigazione in Fondo -->
+        <div class="bottom-actions">
+            <a href="index.html" class="btn-action btn-secondary">
+                <svg class="icon-inline" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+                Torna agli Itinerari (Home)
+            </a>
+            <a href="https://www.google.com/maps/d/viewer?mid=195sYkebfw2Gy6YnY_fHVYr63Jk5jeug" target="_blank" class="btn-action btn-primary">
+                <svg class="icon-inline" viewBox="0 0 24 24"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
+                Apri Mappa su Google Maps (iPhone)
+            </a>
+            <a href="serracozzo.gpx" download="serracozzo.gpx" class="btn-action btn-secondary">
+                <svg class="icon-inline" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Scarica Traccia GPX
+            </a>
+        </div>
+
+    </div>
+
+</body>
+</html>

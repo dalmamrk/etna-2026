@@ -147,6 +147,32 @@ Per consentire l'utilizzo dei percorsi su app di navigazione escursionistica e s
 
 ---
 
+## 📖 Guida Testuale Approfondita: `serracozzo.html`
+
+In conformità con la richiesta dell'utente di avere una pagina di solo testo pulito e ordinato basata sull'itinerario recensito da *Italia in Cammino* ([Sentiero per Serra delle Concazze e Grotta di Serracozzo](https://italiaincammino.com/sentiero-trekking-sentiero-per-serra-delle-concazze-e-grotta-di-serracozzo/)):
+
+1. **Nuova Pagina Autonoma (`serracozzo.html`)**:
+   - Layout *reading-focused* senza elementi di disturbo o script pesanti, perfettamente responsive e leggibile da mobile.
+   - **Scheda Tecnica Sintetica**: Tipologia ad anello, Lunghezza 6,5 km, Dislivello +550 m / -550 m, Quota min 1.750 m (Citelli) / Quota max 2.261 m (Serra delle Concazze), Tempo medio 3h 30m, Difficoltà E (Escursionistico), Sentiero CAI 723.
+   - **Descrizione Tappa per Tappa**:
+     - *Tappa 1*: Dal Rifugio Citelli alla Grotta di Serracozzo (bosco di betulle bianche, vallone e lucernario vulcanico).
+     - *Tappa 2*: Dalla Grotta alla cresta della Serra delle Concazze (risalita canalone di sabbia vulcanica tra cuscini di Spino Santo fino all'orlo della Valle del Bove).
+     - *Tappa 3*: A fil di cresta sui dicchi magmatici fino alla vetta (2.260 m) con vista a picco sui crateri sommitali (Sud-Est).
+     - *Tappa 4*: Rientro ad anello sul canalone scoriaceo del 1928 fino al Rifugio Citelli.
+   - **Approfondimenti Storico-Vulcanologici**: Il Rifugio Citelli, la formazione della galleria lavica del 1971, l'origine geologica della Valle del Bove e la colata del 1928 di Mascali.
+   - **Sicurezza, Acqua ed Equipaggiamento**: Avviso assenza sorgenti d'acqua (almeno 1,5-2L a testa), scarponi alti, bastoncini telescopici e torcia per la grotta.
+   - **Pulsanti di Navigazione Rapida**: Torna alla Home, Apri su Google Maps (iPhone), Scarica traccia GPX.
+
+2. **Collegamento dalla Home Page (`etna26.html` & `index.html`)**:
+   - Inserito un pulsante ad alta visibilità (`.btn-guide-detail`) all'interno del riquadro dell'Opzione 3, sotto il box Google My Maps:
+     `📖 Leggi la Guida Testuale Completa al Sentiero Serracozzo`
+   - Dotato di `onclick="event.stopPropagation()"` per prevenire conflitti con la selezione della card.
+
+3. **Correzione Dislivello Opzione 3**:
+   - Rettificato il dislivello sia nel testo descrittivo della card (`(dislivello di circa +550 m fino a quota 2.261 m di Serra delle Concazze)`), sia nel box delle statistiche (`Serracozzo 6,5 km (Dislivello +550 m) + Sartorius 4 km (~ +100 m)`), sia nei metadati JavaScript di selezione percorso (`infoData.opt3.trek`), allineando tutti i dati tecnici alla quota reale di vetta (2.261 m).
+
+---
+
 ## 🧪 Stato Verifiche
 
 - **Errori JS console**: 0.
@@ -155,3 +181,4 @@ Per consentire l'utilizzo dei percorsi su app di navigazione escursionistica e s
 - **Test GPS Live Tracker**: Collaudato con Geolocation API (gestione permessi, coordinate, cerchio di precisione e badge altitudine).
 - **Mappa & Tracciato GPX**: Rendering verificato su Leaflet sia per l'auto-fit che per il cambio di itinerario.
 - **Accessibilità & leggibilità**: Contrasti conformi, font Inter ben gerarchizzato, touch targets ampi conformi alle linee guida mobile.
+

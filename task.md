@@ -18,3 +18,7 @@
 - `[x]` Attivazione e verifica URL pubblica con GitHub Pages: `https://dalmamrk.github.io/etna-2026/`
 - `[x]` Ottimizzazione bottoni mobile sopra la mappa su una sola riga: etichette brevi `TUTTI`, `NORD`, `SUD`, `MISTO` perfettamente bilanciate in stile tab bar native
 - `[x]` Integrazione Google My Maps interattiva: selettore di vista Leaflet / My Maps con iframe navigabile incorporato, pulsante 'Apri in Google Maps (iPhone)' e box dedicato in Card 3 con smooth scroll e link rapido per navigazione su smartphone
+- `[x]` Creazione pagina guida testuale ordinata `serracozzo.html` con riassunto esaustivo e ordinato dell'itinerario (da italiaincammino.com): scheda tecnica, tappe a tappe 1-4, approfondimenti (Citelli, Grotta Serracozzo, Valle del Bove, Colata 1928), consigli pratici e download traccia
+- `[x]` Inserimento pulsante dedicato sotto il riquadro dell'Opzione 3 in home page per linkare direttamente alla guida testuale (`serracozzo.html`)
+- `[x]` Correzione dislivello nel testo della Card 3 e nei pannelli informativi a +550 m (quota massima 2.261 m Serra delle Concazze)
+- `[x]` Sincronizzazione speculare `index.html` e push su GitHub Pages (`main`)

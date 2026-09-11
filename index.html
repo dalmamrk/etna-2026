@@ -588,6 +588,45 @@
             transform: translateY(-1px);
         }
 
+        /* Bottone Guida Testuale Serracozzo */
+        .card-guide-btn-wrapper {
+            margin: 12px 0 6px 0;
+        }
+
+        .btn-guide-detail {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: #38bdf8;
+            border: 1.5px solid #0284c7;
+            padding: 12px 16px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9em;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(2, 132, 199, 0.2);
+            text-align: center;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .btn-guide-detail:hover {
+            background: linear-gradient(135deg, #0f172a 0%, #0284c7 100%);
+            color: #ffffff;
+            border-color: #38bdf8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(2, 132, 199, 0.4);
+        }
+
+        .btn-guide-detail .icon svg {
+            stroke: currentColor;
+            width: 18px;
+            height: 18px;
+        }
+
         /* Card Dettaglio */
         .cards-container {
             display: grid;
@@ -2093,7 +2132,7 @@
                 <div class="card-section route-section">
                     <div class="section-label"><span class="icon"><svg viewBox="0 0 24 24"><path d="M4 16v-2.38C4 11.5 3 10.5 3 8c0-2.7 1.5-6 4.5-6 1.9 0 2.5 1.8 2.5 3.5 0 3.1-2 5.7-2 8.7V16a2 2 0 1 1-4 0Z"/><path d="M20 20v-2.38c0-2.12 1-3.12 1-5.62 0-2.7-1.5-6-4.5-6-1.9 0-2.5 1.8-2.5 3.5 0 3.1 2 5.7 2 8.7V20a2 2 0 1 0 4 0Z"/></svg></span> Il percorso (2 Tappe nella giornata):</div>
                     <div class="sub-step">
-                        <strong><span class="icon"><svg viewBox="0 0 24 24"><path d="M12 2v8"/><path d="m4.93 10.93 1.41 1.41"/><path d="M2 18h2"/><path d="M20 18h2"/><path d="m19.07 10.93-1.41 1.41"/><path d="M22 22H2"/><path d="m8 6 4-4 4 4"/><path d="M16 18a4 4 0 0 0-8 0"/></svg></span> Mattina (Serracozzo):</strong> Guidate fino al Rifugio Citelli (1.740 m). Da qui parte il sentiero di Serracozzo. Salendo attraverso un bosco di betulle bianche (uniche dell'Etna), troverete prima la <strong>Grotta di Serracozzo</strong> (un tubo lavico in cui si può entrare per qualche metro). Continuando a salire (dislivello di circa 400m), arriverete sull'orlo della <strong>Valle del Bove</strong>: una depressione vulcanica immensa, uno strapiombo spettacolare dove un tempo collassò un pezzo del vulcano. È il panorama più bello dell'Etna.
+                        <strong><span class="icon"><svg viewBox="0 0 24 24"><path d="M12 2v8"/><path d="m4.93 10.93 1.41 1.41"/><path d="M2 18h2"/><path d="M20 18h2"/><path d="m19.07 10.93-1.41 1.41"/><path d="M22 22H2"/><path d="m8 6 4-4 4 4"/><path d="M16 18a4 4 0 0 0-8 0"/></svg></span> Mattina (Serracozzo):</strong> Guidate fino al Rifugio Citelli (1.740 m). Da qui parte il sentiero di Serracozzo. Salendo attraverso un bosco di betulle bianche (uniche dell'Etna), troverete prima la <strong>Grotta di Serracozzo</strong> (un tubo lavico in cui si può entrare per qualche metro). Continuando a salire (dislivello di circa <strong>+550 m</strong> fino a quota 2.261 m di Serra delle Concazze), arriverete sull'orlo della <strong>Valle del Bove</strong>: una depressione vulcanica immensa, uno strapiombo spettacolare dove un tempo collassò un pezzo del vulcano. È il panorama più bello dell'Etna.
                     </div>
                     <div class="sub-step" style="margin-top: 10px;">
                         <strong><span class="icon"><svg viewBox="0 0 24 24"><path d="M12 10V2"/><path d="m4.93 10.93 1.41 1.41"/><path d="M2 18h2"/><path d="M20 18h2"/><path d="m19.07 10.93-1.41 1.41"/><path d="M22 22H2"/><path d="m16 6-4 4-4-4"/><path d="M16 18a4 4 0 0 0-8 0"/></svg></span> Pomeriggio (Sartorius):</strong> Ripresa la macchina, scendete di pochi chilometri e fermatevi allo slargo per i <strong>Monti Sartorius</strong> (quota 1.660 m). È un percorso ad anello facile (circa 4 km) ma geologicamente bellissimo, che vi porta a camminare in cresta su sette crateri a "bottoniera" nati nel 1865.
@@ -2120,6 +2159,14 @@
                     </div>
                 </div>
 
+                <!-- Pulsante Guida Testuale Approfondita Serracozzo -->
+                <div class="card-guide-btn-wrapper">
+                    <a href="serracozzo.html" class="btn-guide-detail" onclick="event.stopPropagation()">
+                        <span class="icon"><svg viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/><path d="M6 14h6"/></svg></span>
+                        <span>📖 Leggi la Guida Testuale Completa al Sentiero Serracozzo</span>
+                    </a>
+                </div>
+
                 <div class="card-highlight highlight-est">
                     <div><strong><span class="icon"><svg viewBox="0 0 24 24"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg></span> Perché sceglierlo:</strong> È la combinazione perfetta. Unisce un trekking con un po' di pendenza e panorami verticali (Serracozzo) a una facile passeggiata pomeridiana letteralmente sopra le bocche vulcaniche (Sartorius).</div>
                 </div>
@@ -2128,7 +2175,7 @@
                     <div class="stats-box">
                         <p><strong><span class="icon"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="4"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9"/></svg></span> Parcheggio:</strong> Rifugio Citelli (1.740 m) & Slargo Sartorius</p>
                         <p><strong><span class="icon"><svg viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-1.1-.9-2-2-2h-1l-1.7-4.3A2 2 0 0 0 15.4 5H8.6a2 2 0 0 0-1.9 1.3L5 11H4c-1.1 0-2 .9-2 2v3c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg></span> Auto da Via Galatola:</strong> ~ 1h 10 min (43 km)</p>
-                        <p><strong><span class="icon"><svg viewBox="0 0 24 24"><path d="M4 16v-2.38C4 11.5 3 10.5 3 8c0-2.7 1.5-6 4.5-6 1.9 0 2.5 1.8 2.5 3.5 0 3.1-2 5.7-2 8.7V16a2 2 0 1 1-4 0Z"/><path d="M20 20v-2.38c0-2.12 1-3.12 1-5.62 0-2.7-1.5-6-4.5-6-1.9 0-2.5 1.8-2.5 3.5 0 3.1 2 5.7 2 8.7V20a2 2 0 1 0 4 0Z"/></svg></span> Trekking:</strong> ~ 8-9 km complessivi | Dislivello +400 m</p>
+                        <p><strong><span class="icon"><svg viewBox="0 0 24 24"><path d="M4 16v-2.38C4 11.5 3 10.5 3 8c0-2.7 1.5-6 4.5-6 1.9 0 2.5 1.8 2.5 3.5 0 3.1-2 5.7-2 8.7V16a2 2 0 1 1-4 0Z"/><path d="M20 20v-2.38c0-2.12 1-3.12 1-5.62 0-2.7-1.5-6-4.5-6-1.9 0-2.5 1.8-2.5 3.5 0 3.1 2 5.7 2 8.7V20a2 2 0 1 0 4 0Z"/></svg></span> Trekking:</strong> Serracozzo 6,5 km (Dislivello +550 m) + Sartorius 4 km (~ +100 m)</p>
                     </div>
 
                     <div class="card-carousel" id="carousel-opt3">
@@ -2457,7 +2504,7 @@ const coords = {
                 dest: "Rifugio Citelli (1.740 m) + Slargo Monti Sartorius (1.660 m)",
                 time: "1h 10 min (circa)",
                 dist: "43 km (via Zafferana / Milo)",
-                trek: "2 Tappe: Serracozzo (+400 m, Grotta e affaccio Valle del Bove) + Sartorius (4 km in cresta)",
+                trek: "2 Tappe: Serracozzo (6,5 km, Dislivello +550 m, Grotta e Serra delle Concazze) + Sartorius (4 km in cresta)",
                 link: "https://www.google.com/maps/dir/?api=1&origin=Via+Crescenzio+Galatola+19,+Catania&destination=Rifugio+Citelli,+Sant'Alfio"
             }
         };
